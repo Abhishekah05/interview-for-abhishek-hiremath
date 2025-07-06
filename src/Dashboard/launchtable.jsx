@@ -23,6 +23,31 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
     }
   };
 
+  // Helper function to get orbit information
+  const getOrbitInfo = (launch) => {
+    if (launch.payloadObjects && launch.payloadObjects.length > 0) {
+      // Get the first payload's orbit, or combine multiple orbits
+      const orbits = launch.payloadObjects
+        .map(payload => payload.orbit)
+        .filter(orbit => orbit && orbit !== 'unknown')
+        .filter((orbit, index, self) => self.indexOf(orbit) === index); // Remove duplicates
+      
+      if (orbits.length > 0) {
+        return orbits.join(', ');
+      }
+    }
+    
+    // Fallback to the original method if payloadObjects is not available
+    if (launch.payloads && launch.payloads.length > 0) {
+      const firstPayload = launch.payloads[0];
+      if (typeof firstPayload === 'object' && firstPayload.orbit) {
+        return firstPayload.orbit;
+      }
+    }
+    
+    return 'Unknown';
+  };
+
   const renderPaginationItems = () => {
     const items = [];
     const maxVisible = 7;
@@ -255,7 +280,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
                   <TableCell sx={{ fontSize: '0.875rem' }}>{formatDate(launch.date_utc)}</TableCell>
                   <TableCell sx={{ fontSize: '0.875rem' }}>{launch.launchpad?.name || 'Unknown'}</TableCell>
                   <TableCell sx={{ fontSize: '0.875rem' }}>{launch.name}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{launch.payloads?.[0]?.orbit || 'Unknown'}</TableCell>
+                  <TableCell sx={{ fontSize: '0.875rem' }}>{getOrbitInfo(launch)}</TableCell>
                   <TableCell><StatusChip launch={launch} /></TableCell>
                   <TableCell sx={{ fontSize: '0.875rem' }}>{launch.rocket?.name || 'Unknown'}</TableCell>
                 </TableRow>

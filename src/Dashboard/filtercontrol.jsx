@@ -1,10 +1,7 @@
 import React from 'react';
 import {
   Button,
-  Select,
   MenuItem,
-  FormControl,
-  InputLabel,
   Menu,
   ListItemText,
   useMediaQuery,
@@ -18,7 +15,7 @@ import DateRangeDropdown from './daterange';
 const FilterControls = ({ 
   filter, 
   onFilterChange, 
-  dateRange = 'all', // Changed default to 'all'
+  dateRange = 'all',
   onDateRangeChange 
 }) => {
   const theme = useTheme();
@@ -93,30 +90,46 @@ const FilterControls = ({
           </Menu>
         </>
       ) : (
-        <FormControl
+        <Button
+          variant="text"
+          endIcon={<ArrowDropDownIcon />}
+          onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
           sx={{
-            minWidth: 200,
-            width: isMobile ? '100%' : 'auto'
+            textTransform: 'none',
+            fontFamily: 'inherit',
+            color: 'text.primary',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            padding: '8px 12px',
+            '&:hover': {
+              backgroundColor: 'transparent'
+            }
           }}
         >
-          <InputLabel sx={{ fontFamily: 'inherit' }}>All Launches</InputLabel>
-          <Select
-            value={filter}
-            onChange={(e) => onFilterChange(e.target.value)}
-            label="All Launches"
-            endIcon={<ArrowDropDownIcon />}
-            sx={{ 
-              fontFamily: 'inherit',
-              textTransform: 'none'
-            }}
-          >
-            <MenuItem value="all">All Launches</MenuItem>
-            <MenuItem value="upcoming">Upcoming Launches</MenuItem>
-            <MenuItem value="successful">Successful Launches</MenuItem>
-            <MenuItem value="failed">Failed Launches</MenuItem>
-          </Select>
-        </FormControl>
+          <FilterListIcon sx={{ fontSize: 20 }} />
+          {getFilterLabel()}
+        </Button>
       )}
+      
+      <Menu
+        anchorEl={filterMenuAnchor}
+        open={Boolean(filterMenuAnchor)}
+        onClose={() => setFilterMenuAnchor(null)}
+      >
+        <MenuItem onClick={() => handleFilterChange('all')}>
+          <ListItemText primary="All Launches" />
+        </MenuItem>
+        <MenuItem onClick={() => handleFilterChange('upcoming')}>
+          <ListItemText primary="Upcoming Launches" />
+        </MenuItem>
+        <MenuItem onClick={() => handleFilterChange('successful')}>
+          <ListItemText primary="Successful Launches" />
+        </MenuItem>
+        <MenuItem onClick={() => handleFilterChange('failed')}>
+          <ListItemText primary="Failed Launches" />
+        </MenuItem>
+      </Menu>
     </Box>
   );
 };

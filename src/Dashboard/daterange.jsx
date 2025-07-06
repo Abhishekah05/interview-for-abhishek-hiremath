@@ -7,8 +7,6 @@ import {
   Box,
   Typography,
   Divider,
-  Paper,
-  Grid,
   IconButton
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -74,12 +72,10 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
 
     const days = [];
     
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(null);
     }
     
-    // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(day);
     }
@@ -172,17 +168,23 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
   return (
     <>
       <Button
-        variant="outlined"
-        startIcon={<CalendarTodayIcon />}
+        variant="text"
         endIcon={<ArrowDropDownIcon />}
         onClick={handleClick}
         sx={{
           textTransform: 'none',
           fontFamily: 'inherit',
-          minWidth: 150,
-          justifyContent: 'space-between'
+          color: 'text.primary',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          padding: '8px 12px',
+          '&:hover': {
+            backgroundColor: 'transparent'
+          }
         }}
       >
+        <CalendarTodayIcon sx={{ fontSize: 20 }} />
         {getDateRangeLabel()}
       </Button>
 
@@ -192,7 +194,7 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
         onClose={handleClose}
         PaperProps={{
           sx: { 
-            minWidth: 650, // Wider to accommodate dual calendar
+            minWidth: 650, 
             maxWidth: 700
           }
         }}

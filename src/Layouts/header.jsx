@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, Toolbar, Box } from '@mui/material';
+
 
 const Header = () => {
   return (
@@ -12,17 +13,17 @@ const Header = () => {
       }}
     >
       <Toolbar sx={{ justifyContent: 'center' }}>
-        <Typography
-          variant="h6"
+        <Box
+          component="img"
+          src="spacex-logo.png"
+          alt="SpaceX Logo"
           sx={{
-            color: '#1976d2',
-            fontWeight: 'bold',
-            fontSize: '1.5rem',
-            letterSpacing: '0.1em',
+            height: '40px',
+            width: 'auto',
+            maxWidth: '250px',
+            objectFit: 'contain'
           }}
-        >
-          SPACEX
-        </Typography>
+        />
       </Toolbar>
     </AppBar>
   );

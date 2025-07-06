@@ -19,46 +19,63 @@ const SpaceXDashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
-  const [dateRange, setDateRange] = useState('all'); // Changed from 'past-6-months' to 'all'
+  const [dateRange, setDateRange] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   
   const itemsPerPage = 10;
 
-  // Fetch launches, launchpads, and rockets on component mount
+  // Fetch launches, launchpads, rockets, and payloads on component mount
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
         
-        // Fetch launches
-        const launchesResponse = await fetch('https://api.spacexdata.com/v5/launches');
-        const launchesData = await launchesResponse.json();
+        // Fetch all data concurrently
+        const [launchesResponse, launchpadsResponse, rocketsResponse, payloadsResponse] = await Promise.all([
+          fetch('https://api.spacexdata.com/v5/launches'),
+          fetch('https://api.spacexdata.com/v4/launchpads'),
+          fetch('https://api.spacexdata.com/v4/rockets'),
+          fetch('https://api.spacexdata.com/v4/payloads')
+        ]);
         
-        // Fetch launchpads
-        const launchpadsResponse = await fetch('https://api.spacexdata.com/v4/launchpads');
-        const launchpadsData = await launchpadsResponse.json();
+        const [launchesData, launchpadsData, rocketsData, payloadsData] = await Promise.all([
+          launchesResponse.json(),
+          launchpadsResponse.json(),
+          rocketsResponse.json(),
+          payloadsResponse.json()
+        ]);
+        
+        // Create lookup maps
         const launchpadsMap = {};
         launchpadsData.forEach(pad => {
           launchpadsMap[pad.id] = pad;
         });
         
-        // Fetch rockets
-        const rocketsResponse = await fetch('https://api.spacexdata.com/v4/rockets');
-        const rocketsData = await rocketsResponse.json();
         const rocketsMap = {};
         rocketsData.forEach(rocket => {
           rocketsMap[rocket.id] = rocket;
         });
         
+        const payloadsMap = {};
+        payloadsData.forEach(payload => {
+          payloadsMap[payload.id] = payload;
+        });
+        
         // Combine data
-        const enrichedLaunches = launchesData.map(launch => ({
-          ...launch,
-          launchpad: launchpadsMap[launch.launchpad],
-          rocket: rocketsMap[launch.rocket]
-        }));
+        const enrichedLaunches = launchesData.map(launch => {
+          // Get payload information
+          const payloadObjects = launch.payloads ? launch.payloads.map(payloadId => payloadsMap[payloadId]).filter(Boolean) : [];
+          
+          return {
+            ...launch,
+            launchpad: launchpadsMap[launch.launchpad],
+            rocket: rocketsMap[launch.rocket],
+            payloadObjects: payloadObjects
+          };
+        });
         
         setLaunches(enrichedLaunches);
-        console.log('Loaded launches:', enrichedLaunches.length); // Debug log
+        console.log('Loaded launches:', enrichedLaunches.length);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -71,14 +88,14 @@ const SpaceXDashboard = () => {
 
   // Filter launches based on selected filter and date range
   useEffect(() => {
-    let filtered = [...launches]; // Create a copy to avoid mutation
+    let filtered = [...launches];
     
-    console.log('Original launches:', launches.length); // Debug log
+    console.log('Original launches:', launches.length);
     
     // Apply date range filter first (only if not 'all')
     if (dateRange && dateRange !== 'all') {
       filtered = filterLaunchesByDateRange(filtered, dateRange);
-      console.log('After date filter:', filtered.length); // Debug log
+      console.log('After date filter:', filtered.length);
     }
     
     // Apply status filter
@@ -97,7 +114,7 @@ const SpaceXDashboard = () => {
         break;
     }
     
-    console.log('After status filter:', filtered.length); // Debug log
+    console.log('After status filter:', filtered.length);
     
     setFilteredLaunches(filtered);
     setCurrentPage(1); // Reset to first page when filter changes

@@ -6,24 +6,24 @@ const StatusChip = ({ launch }) => {
   let sx = {
     fontWeight: 'bold',
     textTransform: 'capitalize',
-    color: 'white',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
   };
 
   if (launch.upcoming) {
     label = 'Upcoming';
-    sx.backgroundColor = '#FFA500';
+    sx.backgroundColor = '#FEF3C7';
+    sx.color = '#92400F';
   } else if (launch.success) {
     label = 'Success';
-    sx.backgroundColor = '#28A745';
-  } else if (launch.success === false) {
-    label = 'Failed';
-    sx.backgroundColor = '#DC3545';
+    sx.backgroundColor = '#DEF7EC';
+    sx.color = '#03543F';
   } else {
-    label = 'Unknown';
-    sx.backgroundColor = '#6c757d';
+    label = 'Failed';
+    sx.backgroundColor = '#FDE2E1';
+    sx.color = '#981B1C';
   }
 
   return <Chip label={label} sx={sx} size="small" />;
 };
+
 export default StatusChip;
