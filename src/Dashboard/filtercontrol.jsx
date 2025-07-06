@@ -11,11 +11,16 @@ import {
   useTheme,
   Box
 } from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import DateRangeDropdown from './daterange';
 
-const FilterControls = ({ filter, onFilterChange }) => {
+const FilterControls = ({ 
+  filter, 
+  onFilterChange, 
+  dateRange = 'all', // Changed default to 'all'
+  onDateRangeChange 
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [filterMenuAnchor, setFilterMenuAnchor] = React.useState(null);
@@ -49,17 +54,10 @@ const FilterControls = ({ filter, onFilterChange }) => {
         justifyContent: 'space-between'
       }}
     >
-      <Button
-        variant="outlined"
-        startIcon={<CalendarTodayIcon />}
-        sx={{ 
-          minWidth: isMobile ? '100%' : 'auto',
-          textTransform: 'none',
-          fontFamily: 'inherit'
-        }}
-      >
-        Past 6 Months
-      </Button>
+      <DateRangeDropdown 
+        value={dateRange} 
+        onDateRangeChange={onDateRangeChange} 
+      />
 
       {isMobile ? (
         <>
@@ -68,6 +66,10 @@ const FilterControls = ({ filter, onFilterChange }) => {
             startIcon={<FilterListIcon />}
             onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
             fullWidth
+            sx={{
+              textTransform: 'none',
+              fontFamily: 'inherit'
+            }}
           >
             {getFilterLabel()}
           </Button>
@@ -103,7 +105,10 @@ const FilterControls = ({ filter, onFilterChange }) => {
             onChange={(e) => onFilterChange(e.target.value)}
             label="All Launches"
             endIcon={<ArrowDropDownIcon />}
-            sx={{ fontFamily: 'inherit' }}
+            sx={{ 
+              fontFamily: 'inherit',
+              textTransform: 'none'
+            }}
           >
             <MenuItem value="all">All Launches</MenuItem>
             <MenuItem value="upcoming">Upcoming Launches</MenuItem>

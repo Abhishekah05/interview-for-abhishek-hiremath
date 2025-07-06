@@ -7,6 +7,7 @@ import LaunchCard from './launchcard';
 import LaunchModal from './launchmodal';
 import LoadingSpinner from './loadingspinner';
 import EmptyState from './emptystate';
+import { filterLaunchesByDateRange } from '../Util/util';
 
 const SpaceXDashboard = () => {
   const theme = useTheme();
@@ -18,9 +19,8 @@ const SpaceXDashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [dateRange, setDateRange] = useState('all'); // Changed from 'past-6-months' to 'all'
   const [currentPage, setCurrentPage] = useState(1);
-  const [launchpads, setLaunchpads] = useState({});
-  const [rockets, setRockets] = useState({});
   
   const itemsPerPage = 10;
 
@@ -58,9 +58,7 @@ const SpaceXDashboard = () => {
         }));
         
         setLaunches(enrichedLaunches);
-        setFilteredLaunches(enrichedLaunches);
-        setLaunchpads(launchpadsMap);
-        setRockets(rocketsMap);
+        console.log('Loaded launches:', enrichedLaunches.length); // Debug log
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -71,27 +69,39 @@ const SpaceXDashboard = () => {
     loadData();
   }, []);
 
-  // Filter launches based on selected filter
+  // Filter launches based on selected filter and date range
   useEffect(() => {
-    let filtered = launches;
+    let filtered = [...launches]; // Create a copy to avoid mutation
     
+    console.log('Original launches:', launches.length); // Debug log
+    
+    // Apply date range filter first (only if not 'all')
+    if (dateRange && dateRange !== 'all') {
+      filtered = filterLaunchesByDateRange(filtered, dateRange);
+      console.log('After date filter:', filtered.length); // Debug log
+    }
+    
+    // Apply status filter
     switch (filter) {
       case 'upcoming':
-        filtered = launches.filter(launch => launch.upcoming);
+        filtered = filtered.filter(launch => launch.upcoming);
         break;
       case 'successful':
-        filtered = launches.filter(launch => launch.success === true);
+        filtered = filtered.filter(launch => launch.success === true);
         break;
       case 'failed':
-        filtered = launches.filter(launch => launch.success === false);
+        filtered = filtered.filter(launch => launch.success === false);
         break;
       default:
-        filtered = launches;
+        // 'all' - no additional filtering needed
+        break;
     }
+    
+    console.log('After status filter:', filtered.length); // Debug log
     
     setFilteredLaunches(filtered);
     setCurrentPage(1); // Reset to first page when filter changes
-  }, [filter, launches]);
+  }, [filter, dateRange, launches]);
 
   const handleLaunchClick = (launch) => {
     setSelectedLaunch(launch);
@@ -105,6 +115,10 @@ const SpaceXDashboard = () => {
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
+  };
+
+  const handleDateRangeChange = (newDateRange) => {
+    setDateRange(newDateRange);
   };
 
   const handlePageChange = (event, page) => {
@@ -127,10 +141,18 @@ const SpaceXDashboard = () => {
 
   return (
     <Layout>
-      <FilterControls filter={filter} onFilterChange={handleFilterChange} />
+      <FilterControls 
+        filter={filter} 
+        onFilterChange={handleFilterChange}
+        dateRange={dateRange}
+        onDateRangeChange={handleDateRangeChange}
+      />
       
       {filteredLaunches.length === 0 ? (
-        <EmptyState />
+        <EmptyState 
+          title="No results found for the specified filter"
+          subtitle="Try adjusting your filter criteria or date range"
+        />
       ) : (
         <>
           {isMobile ? (
