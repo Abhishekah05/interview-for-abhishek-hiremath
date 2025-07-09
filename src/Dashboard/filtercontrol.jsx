@@ -44,11 +44,12 @@ const FilterControls = ({
     <Box
       sx={{
         display: 'flex',
-        gap: 2,
+        gap: isMobile ? 1 : 2,
         mb: 3,
         alignItems: 'center',
         flexWrap: 'wrap',
-        justifyContent: 'space-between'
+        justifyContent: isMobile ? 'flex-start' : 'space-between',
+        width: '100%'
       }}
     >
       <DateRangeDropdown 
@@ -62,14 +63,64 @@ const FilterControls = ({
             variant="outlined"
             startIcon={<FilterListIcon />}
             onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
-            fullWidth
             sx={{
               textTransform: 'none',
-              fontFamily: 'inherit'
+              fontFamily: 'inherit',
+              fontSize: '14px',
+              minWidth: 'auto',
+              flexShrink: 0
             }}
           >
             {getFilterLabel()}
           </Button>
+          <Menu
+            anchorEl={filterMenuAnchor}
+            open={Boolean(filterMenuAnchor)}
+            onClose={() => setFilterMenuAnchor(null)}
+            PaperProps={{
+              sx: {
+                minWidth: '200px',
+                maxWidth: '90vw'
+              }
+            }}
+          >
+            <MenuItem onClick={() => handleFilterChange('all')}>
+              <ListItemText primary="All Launches" />
+            </MenuItem>
+            <MenuItem onClick={() => handleFilterChange('upcoming')}>
+              <ListItemText primary="Upcoming Launches" />
+            </MenuItem>
+            <MenuItem onClick={() => handleFilterChange('successful')}>
+              <ListItemText primary="Successful Launches" />
+            </MenuItem>
+            <MenuItem onClick={() => handleFilterChange('failed')}>
+              <ListItemText primary="Failed Launches" />
+            </MenuItem>
+          </Menu>
+        </>
+      ) : (
+        <>
+          <Button
+            variant="text"
+            endIcon={<ArrowDropDownIcon />}
+            onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
+            sx={{
+              textTransform: 'none',
+              fontFamily: 'inherit',
+              color: 'text.primary',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              padding: '8px 12px',
+              '&:hover': {
+                backgroundColor: 'transparent'
+              }
+            }}
+          >
+            <FilterListIcon sx={{ fontSize: 20 }} />
+            {getFilterLabel()}
+          </Button>
+          
           <Menu
             anchorEl={filterMenuAnchor}
             open={Boolean(filterMenuAnchor)}
@@ -89,47 +140,7 @@ const FilterControls = ({
             </MenuItem>
           </Menu>
         </>
-      ) : (
-        <Button
-          variant="text"
-          endIcon={<ArrowDropDownIcon />}
-          onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
-          sx={{
-            textTransform: 'none',
-            fontFamily: 'inherit',
-            color: 'text.primary',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            padding: '8px 12px',
-            '&:hover': {
-              backgroundColor: 'transparent'
-            }
-          }}
-        >
-          <FilterListIcon sx={{ fontSize: 20 }} />
-          {getFilterLabel()}
-        </Button>
       )}
-      
-      <Menu
-        anchorEl={filterMenuAnchor}
-        open={Boolean(filterMenuAnchor)}
-        onClose={() => setFilterMenuAnchor(null)}
-      >
-        <MenuItem onClick={() => handleFilterChange('all')}>
-          <ListItemText primary="All Launches" />
-        </MenuItem>
-        <MenuItem onClick={() => handleFilterChange('upcoming')}>
-          <ListItemText primary="Upcoming Launches" />
-        </MenuItem>
-        <MenuItem onClick={() => handleFilterChange('successful')}>
-          <ListItemText primary="Successful Launches" />
-        </MenuItem>
-        <MenuItem onClick={() => handleFilterChange('failed')}>
-          <ListItemText primary="Failed Launches" />
-        </MenuItem>
-      </Menu>
     </Box>
   );
 };

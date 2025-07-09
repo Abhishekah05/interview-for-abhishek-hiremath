@@ -7,7 +7,9 @@ import {
   Box,
   Typography,
   Divider,
-  IconButton
+  IconButton,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -15,6 +17,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const DateRangeDropdown = ({ value, onDateRangeChange }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -88,14 +93,18 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
     const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
     return (
-      <Box sx={{ p: 2, minWidth: 240 }}>
+      <Box sx={{ p: isMobile ? 1 : 2, minWidth: isMobile ? 200 : 240 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           {showNavigation && (
             <IconButton size="small" onClick={() => navigateMonth(-1)}>
               <ChevronLeftIcon />
             </IconButton>
           )}
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mx: showNavigation ? 0 : 'auto' }}>
+          <Typography variant="subtitle1" sx={{ 
+            fontWeight: 'bold', 
+            mx: showNavigation ? 0 : 'auto',
+            fontSize: isMobile ? '14px' : '16px'
+          }}>
             {getMonthYear(monthDate)}
           </Typography>
           {showNavigation && (
@@ -111,11 +120,11 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
             <Box key={day} sx={{ 
               textAlign: 'center', 
               py: 1, 
-              fontSize: '0.75rem', 
+              fontSize: isMobile ? '0.65rem' : '0.75rem', 
               fontWeight: 'bold',
               color: '#666',
-              width: '32px',
-              height: '32px',
+              width: isMobile ? '28px' : '32px',
+              height: isMobile ? '28px' : '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -130,10 +139,10 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
           {days.map((day, index) => (
             <Box key={index} sx={{ 
               textAlign: 'center', 
-              fontSize: '0.875rem',
+              fontSize: isMobile ? '0.75rem' : '0.875rem',
               cursor: day ? 'pointer' : 'default',
-              width: '32px',
-              height: '32px',
+              width: isMobile ? '28px' : '32px',
+              height: isMobile ? '28px' : '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -152,15 +161,18 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
     nextMonth.setMonth(currentMonth.getMonth() + 1);
 
     return (
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ 
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row'
+      }}>
         {/* First month with navigation */}
         {renderCalendarMonth(currentMonth, true)}
         
         {/* Divider */}
-        <Divider orientation="vertical" flexItem />
+        <Divider orientation={isMobile ? 'horizontal' : 'vertical'} flexItem />
         
         {/* Second month without navigation */}
-        {renderCalendarMonth(nextMonth, false)}
+        {!isMobile && renderCalendarMonth(nextMonth, false)}
       </Box>
     );
   };
@@ -178,14 +190,18 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
           display: 'flex',
           alignItems: 'center',
           gap: 1,
-          padding: '8px 12px',
+          padding: isMobile ? '6px 8px' : '8px 12px',
+          fontSize: isMobile ? '14px' : '16px',
+          minWidth: isMobile ? 'auto' : 'auto',
           '&:hover': {
             backgroundColor: 'transparent'
           }
         }}
       >
-        <CalendarTodayIcon sx={{ fontSize: 20 }} />
-        {getDateRangeLabel()}
+        <CalendarTodayIcon sx={{ fontSize: isMobile ? 18 : 20 }} />
+        <Typography sx={{ fontSize: isMobile ? '14px' : '16px' }}>
+          {getDateRangeLabel()}
+        </Typography>
       </Button>
 
       <Menu
@@ -194,14 +210,22 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
         onClose={handleClose}
         PaperProps={{
           sx: { 
-            minWidth: 650, 
-            maxWidth: 700
+            minWidth: isMobile ? 280 : isTablet ? 500 : 650, 
+            maxWidth: isMobile ? '95vw' : isTablet ? '90vw' : 700,
+            maxHeight: isMobile ? '80vh' : 'auto'
           }
         }}
       >
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ 
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row'
+        }}>
           {/* Left side - Preset options */}
-          <Box sx={{ minWidth: 150, borderRight: '1px solid #e0e0e0' }}>
+          <Box sx={{ 
+            minWidth: isMobile ? 'auto' : 150, 
+            borderRight: isMobile ? 'none' : '1px solid #e0e0e0',
+            borderBottom: isMobile ? '1px solid #e0e0e0' : 'none'
+          }}>
             <MenuItem onClick={() => handlePresetSelect('all')}>
               <ListItemText primary="All time" />
             </MenuItem>
@@ -225,7 +249,7 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
             </MenuItem>
           </Box>
           
-          {/* Right side - Dual Calendar */}
+          {/* Right side - Calendar */}
           <Box>
             {renderDualCalendar()}
           </Box>

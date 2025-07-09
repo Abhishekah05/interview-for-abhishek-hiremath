@@ -86,6 +86,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
           color: currentPage === 1 ? '#ccc' : '#333',
           backgroundColor: '#fff',
           border: '1px solid #e0e0e0',
+          fontFamily: 'Inter, sans-serif',
           '&:hover': {
             backgroundColor: currentPage === 1 ? '#fff' : '#f9f9f9',
           }
@@ -110,6 +111,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '0.875rem',
+            fontFamily: 'Inter, sans-serif',
             fontWeight: 1 === currentPage ? 'bold' : 'normal',
             backgroundColor: 1 === currentPage ? '#1976d2' : '#fff',
             color: 1 === currentPage ? '#fff' : '#333',
@@ -126,7 +128,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
 
       if (startPage > 2) {
         items.push(
-          <Typography key="dots1" sx={{ mx: 1, fontSize: '0.875rem', color: '#999' }}>
+          <Typography key="dots1" sx={{ mx: 1, fontSize: '0.875rem', color: '#999', fontFamily: 'Inter, sans-serif' }}>
             ...
           </Typography>
         );
@@ -148,6 +150,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '0.875rem',
+            fontFamily: 'Inter, sans-serif',
             fontWeight: i === currentPage ? 'bold' : 'normal',
             backgroundColor: i === currentPage ? '#1976d2' : '#fff',
             color: i === currentPage ? '#fff' : '#333',
@@ -167,7 +170,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         items.push(
-          <Typography key="dots2" sx={{ mx: 1, fontSize: '0.875rem', color: '#999' }}>
+          <Typography key="dots2" sx={{ mx: 1, fontSize: '0.875rem', color: '#999', fontFamily: 'Inter, sans-serif' }}>
             ...
           </Typography>
         );
@@ -186,6 +189,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '0.875rem',
+            fontFamily: 'Inter, sans-serif',
             fontWeight: totalPages === currentPage ? 'bold' : 'normal',
             backgroundColor: totalPages === currentPage ? '#1976d2' : '#fff',
             color: totalPages === currentPage ? '#fff' : '#333',
@@ -215,6 +219,7 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
           color: currentPage === totalPages ? '#ccc' : '#333',
           backgroundColor: '#fff',
           border: '1px solid #e0e0e0',
+          fontFamily: 'Inter, sans-serif',
           '&:hover': {
             backgroundColor: currentPage === totalPages ? '#fff' : '#f9f9f9',
           }
@@ -240,24 +245,65 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
       >
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>No.</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>Launched (UTC)</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>Location</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>Mission</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>Orbit</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>Launch Status</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>Rocket</TableCell>
+            <TableRow sx={{ backgroundColor: '#F4F5F7' }}>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>No.</TableCell>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>Launched (UTC)</TableCell>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>Location</TableCell>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>Mission</TableCell>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>Orbit</TableCell>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>Launch Status</TableCell>
+              <TableCell sx={{ 
+                // fontWeight: 'bold', 
+                fontSize: '0.875rem',
+                color: '#4B5563',
+                fontFamily: 'Inter, sans-serif'
+              }}>Rocket</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {launches.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} sx={{ textAlign: 'center', p: 4 }}>
-                  <Typography variant="h6" gutterBottom sx={{ color: '#666' }}>
+                <TableCell colSpan={7} sx={{ textAlign: 'center', p: 4, border: 'none' }}>
+                  <Typography variant="h6" gutterBottom sx={{ 
+                    color: '#666',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
                     No results found for the specified filter
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ 
+                    color: '#999',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
                     Try adjusting your filter criteria or date range
                   </Typography>
                 </TableCell>
@@ -274,15 +320,33 @@ const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageC
                     },
                   }}
                 >
-                  <TableCell sx={{ fontSize: '0.875rem' }}>
+                  <TableCell sx={{ 
+                    fontSize: '0.875rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
                     {String((currentPage - 1) * itemsPerPage + index + 1).padStart(2, '0')}
                   </TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{formatDate(launch.date_utc)}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{launch.launchpad?.name || 'Unknown'}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{launch.name}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{getOrbitInfo(launch)}</TableCell>
+                  <TableCell sx={{ 
+                    fontSize: '0.875rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>{formatDate(launch.date_utc)}</TableCell>
+                  <TableCell sx={{ 
+                    fontSize: '0.875rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>{launch.launchpad?.name || 'Unknown'}</TableCell>
+                  <TableCell sx={{ 
+                    fontSize: '0.875rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>{launch.name}</TableCell>
+                  <TableCell sx={{ 
+                    fontSize: '0.875rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>{getOrbitInfo(launch)}</TableCell>
                   <TableCell><StatusChip launch={launch} /></TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{launch.rocket?.name || 'Unknown'}</TableCell>
+                  <TableCell sx={{ 
+                    fontSize: '0.875rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>{launch.rocket?.name || 'Unknown'}</TableCell>
                 </TableRow>
               ))
             )}

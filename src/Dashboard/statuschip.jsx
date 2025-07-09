@@ -4,9 +4,9 @@ import { Chip } from '@mui/material';
 const StatusChip = ({ launch }) => {
   let label = '';
   let sx = {
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     textTransform: 'capitalize',
-    fontFamily: 'inherit',
+    fontFamily: 'Inter, sans-serif',
   };
 
   if (launch.upcoming) {

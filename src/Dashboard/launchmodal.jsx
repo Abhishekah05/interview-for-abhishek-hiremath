@@ -19,6 +19,7 @@ import { formatDate } from '../Util/util';
 const LaunchModal = ({ open, launch, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   if (!launch) return null;
 
@@ -98,42 +99,48 @@ const LaunchModal = ({ open, launch, onClose }) => {
   const detailRowStyle = {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    py: 1.2,
+    alignItems: isMobile ? 'flex-start' : 'center',
+    flexDirection: isMobile ? 'column' : 'row',
+    py: isMobile ? 1.5 : 1.2,
     px: 0,
     borderBottom: '1px solid #e0e0e0',
-    minHeight: '40px'
+    minHeight: isMobile ? '60px' : '40px',
+    gap: isMobile ? 0.5 : 0
   };
 
   const labelStyle = {
-    fontWeight: 400,
+    fontWeight: 500,
     color: '#666',
-    fontSize: '14px',
-    fontFamily: 'inherit'
+    fontSize: isMobile ? '13px' : '14px',
+    fontFamily: 'inherit',
+    width: isMobile ? '100%' : 'auto'
   };
 
   const valueStyle = {
     fontWeight: 500,
     color: '#333',
-    fontSize: '14px',
+    fontSize: isMobile ? '14px' : '14px',
     fontFamily: 'inherit',
-    textAlign: 'right'
+    textAlign: isMobile ? 'left' : 'right',
+    width: isMobile ? '100%' : 'auto',
+    wordBreak: 'break-word'
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
-      fullWidth
+      maxWidth={false}
+      fullWidth={isMobile}
       fullScreen={isMobile}
       PaperProps={{
         sx: {
           borderRadius: isMobile ? 0 : 8,
-          maxHeight: isMobile ? '100vh' : '85vh',
+          maxHeight: isMobile ? '100vh' : '90vh',
           height: isMobile ? '100vh' : 'auto',
-          width: isMobile ? '100%' : '500px',
-          maxWidth: isMobile ? '100%' : '500px'
+          width: isMobile ? '100vw' : isTablet ? '90vw' : '500px',
+          maxWidth: isMobile ? '100vw' : isTablet ? '90vw' : '500px',
+          m: isMobile ? 0 : 'auto'
         }
       }}
     >
@@ -143,30 +150,35 @@ const LaunchModal = ({ open, launch, onClose }) => {
           justifyContent="space-between" 
           alignItems="center"
           sx={{ 
-            px: 3, 
-            py: 2.5, 
+            px: isMobile ? 2 : 3, 
+            py: isMobile ? 1.5 : 2.5, 
             backgroundColor: '#fff'
           }}
         >
-          <Box display="flex" alignItems="center" gap={2}>
+          <Box display="flex" alignItems="center" gap={isMobile ? 1.5 : 2} sx={{ flex: 1, minWidth: 0 }}>
             <Avatar 
               src={launch.links?.patch?.small || undefined}
               sx={{ 
-                width: 48, 
-                height: 48,
+                width: isMobile ? 40 : 48, 
+                height: isMobile ? 40 : 48,
                 backgroundColor: '#f0f0f0',
-                border: '1px solid #e0e0e0'
+                border: '1px solid #e0e0e0',
+                flexShrink: 0
               }}
             >
               {!launch.links?.patch?.small && launch.name?.charAt(0)}
             </Avatar>
-            <Box>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
               <Typography variant="h6" sx={{ 
                 fontFamily: 'inherit', 
                 fontWeight: 600,
-                fontSize: '20px',
+                fontSize: isMobile ? '16px' : '20px',
                 color: '#333',
-                mb: 0.5
+                mb: 0.5,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: isMobile ? 'normal' : 'nowrap',
+                lineHeight: isMobile ? 1.3 : 1.2
               }}>
                 {launch.name}
               </Typography>
@@ -176,9 +188,9 @@ const LaunchModal = ({ open, launch, onClose }) => {
                 sx={{
                   backgroundColor: getStatusColor(),
                   color: 'white',
-                  fontSize: '11px',
+                  fontSize: isMobile ? '10px' : '11px',
                   fontWeight: 600,
-                  height: '20px',
+                  height: isMobile ? '18px' : '20px',
                   '& .MuiChip-label': {
                     px: 1
                   }
@@ -186,21 +198,22 @@ const LaunchModal = ({ open, launch, onClose }) => {
               />
             </Box>
           </Box>
-          <IconButton onClick={onClose} size="small">
-            <CloseIcon />
+          <IconButton onClick={onClose} size="small" sx={{ ml: 1 }}>
+            <CloseIcon fontSize={isMobile ? 'small' : 'medium'} />
           </IconButton>
         </Box>
       </DialogTitle>
 
       <DialogContent sx={{ 
         p: 0,
-        overflow: 'hidden'
+        overflow: 'auto',
+        flex: 1
       }}>
         {/* Mission Description */}
         {launch.details && (
           <Box sx={{ 
-            px: 3, 
-            py: 2, 
+            px: isMobile ? 2 : 3, 
+            py: isMobile ? 1.5 : 2, 
             backgroundColor: '#f8f9fa',
             borderTop: '1px solid #e0e0e0',
             borderBottom: '1px solid #e0e0e0'
@@ -209,7 +222,7 @@ const LaunchModal = ({ open, launch, onClose }) => {
               fontFamily: 'inherit', 
               lineHeight: 1.5,
               color: '#555',
-              fontSize: '14px'
+              fontSize: isMobile ? '13px' : '14px'
             }}>
               {launch.details}
             </Typography>
@@ -222,7 +235,7 @@ const LaunchModal = ({ open, launch, onClose }) => {
                 sx={{
                   color: '#1976d2',
                   textDecoration: 'none',
-                  fontSize: '14px',
+                  fontSize: isMobile ? '13px' : '14px',
                   fontWeight: 500,
                   display: 'inline-block',
                   mt: 1,
@@ -239,8 +252,8 @@ const LaunchModal = ({ open, launch, onClose }) => {
 
         {/* Details Section */}
         <Box sx={{ 
-          px: 3,
-          py: 2
+          px: isMobile ? 2 : 3,
+          py: isMobile ? 1.5 : 2
         }}>
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Flight Number</Typography>
@@ -316,6 +329,7 @@ const LaunchModal = ({ open, launch, onClose }) => {
           <Button 
             onClick={onClose} 
             color="primary" 
+            variant="contained"
             sx={{ 
               fontFamily: 'inherit',
               textTransform: 'none',
