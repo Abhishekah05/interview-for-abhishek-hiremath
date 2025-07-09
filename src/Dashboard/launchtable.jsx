@@ -26,8 +26,10 @@ const LaunchTable = ({
   onPageChange, 
   itemsPerPage = 10,
   isMobile,
-  isLoading
+  isLoading,
+  initialLoad
 }) => {
+
   const handlePageClick = (page) => {
     if (page >= 1 && page <= totalPages) {
       onPageChange(null, page);
@@ -239,6 +241,7 @@ const LaunchTable = ({
       backgroundColor: 'white', 
       pb: 4,
       width: '100%',
+      minHeight: isMobile ? 'calc(100vh - 200px)' : 'auto'
     }}>
       <TableContainer
         component={Paper}
@@ -247,6 +250,7 @@ const LaunchTable = ({
           border: '1px solid #e0e0e0',
           borderRadius: 1,
           backgroundColor: 'white',
+          minHeight: isMobile ? '300px' : 'auto'
         }}
       >
         <Table>
@@ -294,10 +298,10 @@ const LaunchTable = ({
                 fontFamily: 'Inter, sans-serif',
                 padding: isMobile ? '8px 4px' : '16px'
               }}>Rocket</TableCell>
-            </TableRow>
+           </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
+            {initialLoad ? (
               <TableRow>
                 <TableCell colSpan={7} sx={{ 
                   textAlign: 'center', 
@@ -398,13 +402,13 @@ const LaunchTable = ({
                     {launch.rocket?.name || 'Unknown'}
                   </TableCell>
                 </TableRow>
-              ))
+                ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {!isLoading && totalPages > 1 && launches.length > 0 && (
+      {!initialLoad && totalPages > 1 && launches.length > 0 && (
         <Box
           sx={{
             display: 'flex',
