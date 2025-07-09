@@ -7,18 +7,15 @@ import {
   Box,
   Typography,
   Divider,
-  IconButton,
-  useMediaQuery,
-  useTheme
+  IconButton
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
-  const theme = useTheme();
-  const [anchorEl, setAnchorEl] = useState(null);
+const DateRangeDropdown = ({ value, onDateRangeChange, mobile = false }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const handleClick = (event) => {
@@ -91,18 +88,14 @@ const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
     const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
     return (
-      <Box sx={{ p: isMobile ? 1 : 2, minWidth: isMobile ? 200 : 240 }}>
+      <Box sx={{ p: 2, minWidth: 240 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           {showNavigation && (
             <IconButton size="small" onClick={() => navigateMonth(-1)}>
               <ChevronLeftIcon />
             </IconButton>
           )}
-          <Typography variant="subtitle1" sx={{ 
-            fontWeight: 'bold', 
-            mx: showNavigation ? 0 : 'auto',
-            fontSize: isMobile ? '14px' : '16px'
-          }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mx: showNavigation ? 0 : 'auto' }}>
             {getMonthYear(monthDate)}
           </Typography>
           {showNavigation && (
@@ -112,16 +105,17 @@ const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
           )}
         </Box>
         
+        {/* Week day headers */}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0, mb: 1 }}>
           {weekDays.map((day) => (
             <Box key={day} sx={{ 
               textAlign: 'center', 
               py: 1, 
-              fontSize: isMobile ? '0.65rem' : '0.75rem', 
+              fontSize: '0.75rem', 
               fontWeight: 'bold',
               color: '#666',
-              width: isMobile ? '28px' : '32px',
-              height: isMobile ? '28px' : '32px',
+              width: '32px',
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -131,14 +125,15 @@ const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
           ))}
         </Box>
         
+        {/* Calendar days */}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0 }}>
           {days.map((day, index) => (
             <Box key={index} sx={{ 
               textAlign: 'center', 
-              fontSize: isMobile ? '0.75rem' : '0.875rem',
+              fontSize: '0.875rem',
               cursor: day ? 'pointer' : 'default',
-              width: isMobile ? '28px' : '32px',
-              height: isMobile ? '28px' : '32px',
+              width: '32px',
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -157,25 +152,26 @@ const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
     nextMonth.setMonth(currentMonth.getMonth() + 1);
 
     return (
-      <Box sx={{ 
-        display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row'
-      }}>
+      <Box sx={{ display: 'flex' }}>
+        {/* First month with navigation */}
         {renderCalendarMonth(currentMonth, true)}
         
-        <Divider orientation={isMobile ? 'horizontal' : 'vertical'} flexItem />
+        {/* Divider */}
+        <Divider orientation="vertical" flexItem />
         
-        {!isMobile && renderCalendarMonth(nextMonth, false)}
+        {/* Second month without navigation */}
+        {renderCalendarMonth(nextMonth, false)}
       </Box>
     );
   };
 
   return (
     <>
-      <Button
-        variant={isMobile ? "outlined" : "text"}
+           <Button
+        variant={mobile ? "outlined" : "text"}
         endIcon={<ArrowDropDownIcon />}
         onClick={handleClick}
+        fullWidth={mobile}
         sx={{
           textTransform: 'none',
           fontFamily: 'inherit',
@@ -183,41 +179,43 @@ const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
           display: 'flex',
           alignItems: 'center',
           gap: 1,
-          padding: isMobile ? '6px 12px' : '8px 12px',
-          fontSize: isMobile ? '14px' : '16px',
-          minWidth: 'auto',
+          padding: mobile ? '8px 12px' : '8px 12px',
+          justifyContent: mobile ? 'space-between' : 'flex-start',
+          minWidth: mobile ? 'auto' : 'unset',
           '&:hover': {
-            backgroundColor: isMobile ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
+            backgroundColor: 'transparent'
           }
         }}
       >
-        <CalendarTodayIcon sx={{ fontSize: isMobile ? 18 : 20 }} />
-        <Typography sx={{ fontSize: isMobile ? '14px' : '16px' }}>
-          {getDateRangeLabel()}
-        </Typography>
+        {mobile ? (
+          <>
+            <Box display="flex" alignItems="center" gap={1}>
+              <CalendarTodayIcon sx={{ fontSize: 20 }} />
+              {getDateRangeLabel()}
+            </Box>
+          </>
+        ) : (
+          <>
+            <CalendarTodayIcon sx={{ fontSize: 20 }} />
+            {getDateRangeLabel()}
+          </>
+        )}
       </Button>
 
-      <Menu
+         <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
         PaperProps={{
           sx: { 
-            minWidth: isMobile ? 280 : 650, 
-            maxWidth: isMobile ? '95vw' : 700,
-            maxHeight: isMobile ? '80vh' : 'auto'
+            minWidth: 650, 
+            maxWidth: 700
           }
         }}
       >
-        <Box sx={{ 
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row'
-        }}>
-          <Box sx={{ 
-            minWidth: isMobile ? 'auto' : 150, 
-            borderRight: isMobile ? 'none' : '1px solid #e0e0e0',
-            borderBottom: isMobile ? '1px solid #e0e0e0' : 'none'
-          }}>
+        <Box sx={{ display: 'flex' }}>
+          {/* Left side - Preset options */}
+          <Box sx={{ minWidth: 150, borderRight: '1px solid #e0e0e0' }}>
             <MenuItem onClick={() => handlePresetSelect('all')}>
               <ListItemText primary="All time" />
             </MenuItem>
@@ -241,6 +239,7 @@ const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
             </MenuItem>
           </Box>
           
+          {/* Right side - Dual Calendar */}
           <Box>
             {renderDualCalendar()}
           </Box>

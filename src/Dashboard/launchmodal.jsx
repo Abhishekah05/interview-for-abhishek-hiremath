@@ -8,13 +8,18 @@ import {
   Typography,
   Box,
   IconButton,
+  useMediaQuery,
+  useTheme,
   Avatar,
   Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { formatDate } from '../Util/util';
 
-const LaunchModal = ({ open, launch, onClose, isMobile }) => {
+const LaunchModal = ({ open, launch, onClose }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   if (!launch) return null;
 
   const getStatusColor = () => {
@@ -27,16 +32,20 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
     return launch.success ? 'Success' : 'Failed';
   };
 
+  // Helper function to get payload type information
   const getPayloadType = () => {
     if (launch.payloadObjects && launch.payloadObjects.length > 0) {
       const types = launch.payloadObjects
         .map(payload => payload.type)
         .filter(type => type && type !== 'unknown')
-        .filter((type, index, self) => self.indexOf(type) === index);
+        .filter((type, index, self) => self.indexOf(type) === index); // Remove duplicates
       
-      if (types.length > 0) return types.join(', ');
+      if (types.length > 0) {
+        return types.join(', ');
+      }
     }
     
+    // Fallback to original structure
     if (launch.payloads && launch.payloads.length > 0) {
       const firstPayload = launch.payloads[0];
       if (typeof firstPayload === 'object' && firstPayload.type) {
@@ -47,16 +56,20 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
     return 'Unknown';
   };
 
+  // Helper function to get orbit information
   const getOrbitInfo = () => {
     if (launch.payloadObjects && launch.payloadObjects.length > 0) {
       const orbits = launch.payloadObjects
         .map(payload => payload.orbit)
         .filter(orbit => orbit && orbit !== 'unknown')
-        .filter((orbit, index, self) => self.indexOf(orbit) === index);
+        .filter((orbit, index, self) => self.indexOf(orbit) === index); // Remove duplicates
       
-      if (orbits.length > 0) return orbits.join(', ');
+      if (orbits.length > 0) {
+        return orbits.join(', ');
+      }
     }
     
+    // Fallback to original structure
     if (launch.payloads && launch.payloads.length > 0) {
       const firstPayload = launch.payloads[0];
       if (typeof firstPayload === 'object' && firstPayload.orbit) {
@@ -67,13 +80,16 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
     return 'Unknown';
   };
 
+  // Helper function to get payload mass
   const getPayloadMass = () => {
     if (launch.payloadObjects && launch.payloadObjects.length > 0) {
       const totalMass = launch.payloadObjects.reduce((sum, payload) => {
         return sum + (payload.mass_kg || 0);
       }, 0);
       
-      if (totalMass > 0) return `${totalMass.toLocaleString()} kg`;
+      if (totalMass > 0) {
+        return `${totalMass.toLocaleString()} kg`;
+      }
     }
     
     return 'Unknown';
@@ -83,7 +99,7 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    py: isMobile ? 1 : 1.2,
+    py: 1.2,
     px: 0,
     borderBottom: '1px solid #e0e0e0',
     minHeight: '40px'
@@ -92,14 +108,14 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
   const labelStyle = {
     fontWeight: 400,
     color: '#666',
-    fontSize: isMobile ? '13px' : '14px',
+    fontSize: '14px',
     fontFamily: 'inherit'
   };
 
   const valueStyle = {
     fontWeight: 500,
     color: '#333',
-    fontSize: isMobile ? '13px' : '14px',
+    fontSize: '14px',
     fontFamily: 'inherit',
     textAlign: 'right'
   };
@@ -127,8 +143,8 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
           justifyContent="space-between" 
           alignItems="center"
           sx={{ 
-            px: isMobile ? 2 : 3, 
-            py: isMobile ? 1.5 : 2.5, 
+            px: 3, 
+            py: 2.5, 
             backgroundColor: '#fff'
           }}
         >
@@ -136,8 +152,8 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
             <Avatar 
               src={launch.links?.patch?.small || undefined}
               sx={{ 
-                width: isMobile ? 40 : 48, 
-                height: isMobile ? 40 : 48,
+                width: 48, 
+                height: 48,
                 backgroundColor: '#f0f0f0',
                 border: '1px solid #e0e0e0'
               }}
@@ -148,7 +164,7 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
               <Typography variant="h6" sx={{ 
                 fontFamily: 'inherit', 
                 fontWeight: 600,
-                fontSize: isMobile ? '18px' : '20px',
+                fontSize: '20px',
                 color: '#333',
                 mb: 0.5
               }}>
@@ -180,10 +196,11 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
         p: 0,
         overflow: 'hidden'
       }}>
+        {/* Mission Description */}
         {launch.details && (
           <Box sx={{ 
-            px: isMobile ? 2 : 3, 
-            py: isMobile ? 1.5 : 2, 
+            px: 3, 
+            py: 2, 
             backgroundColor: '#f8f9fa',
             borderTop: '1px solid #e0e0e0',
             borderBottom: '1px solid #e0e0e0'
@@ -192,7 +209,7 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
               fontFamily: 'inherit', 
               lineHeight: 1.5,
               color: '#555',
-              fontSize: isMobile ? '13px' : '14px'
+              fontSize: '14px'
             }}>
               {launch.details}
             </Typography>
@@ -205,7 +222,7 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
                 sx={{
                   color: '#1976d2',
                   textDecoration: 'none',
-                  fontSize: isMobile ? '13px' : '14px',
+                  fontSize: '14px',
                   fontWeight: 500,
                   display: 'inline-block',
                   mt: 1,
@@ -220,9 +237,10 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
           </Box>
         )}
 
+        {/* Details Section */}
         <Box sx={{ 
-          px: isMobile ? 2 : 3,
-          py: isMobile ? 1.5 : 2
+          px: 3,
+          py: 2
         }}>
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Flight Number</Typography>
@@ -237,6 +255,21 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Rocket Type</Typography>
             <Typography sx={valueStyle}>{launch.rocket?.name || 'Unknown'}</Typography>
+          </Box>
+
+          <Box sx={detailRowStyle}>
+            <Typography sx={labelStyle}>Rocket Name</Typography>
+            <Typography sx={valueStyle}>{launch.rocket?.name || 'Unknown'}</Typography>
+          </Box>
+
+          <Box sx={detailRowStyle}>
+            <Typography sx={labelStyle}>Manufacturer</Typography>
+            <Typography sx={valueStyle}>SpaceX</Typography>
+          </Box>
+
+          <Box sx={detailRowStyle}>
+            <Typography sx={labelStyle}>Nationality</Typography>
+            <Typography sx={valueStyle}>United States</Typography>
           </Box>
 
           <Box sx={detailRowStyle}>
@@ -274,25 +307,26 @@ const LaunchModal = ({ open, launch, onClose, isMobile }) => {
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ 
-        p: isMobile ? 1.5 : 2, 
-        borderTop: '1px solid #e0e0e0',
-        backgroundColor: '#fff'
-      }}>
-        <Button 
-          onClick={onClose} 
-          color="primary" 
-          sx={{ 
-            fontFamily: 'inherit',
-            textTransform: 'none',
-            fontWeight: 500,
-            fontSize: isMobile ? '14px' : '16px'
-          }}
-          fullWidth
-        >
-          Close
-        </Button>
-      </DialogActions>
+      {isMobile && (
+        <DialogActions sx={{ 
+          p: 2, 
+          borderTop: '1px solid #e0e0e0',
+          backgroundColor: '#fff'
+        }}>
+          <Button 
+            onClick={onClose} 
+            color="primary" 
+            sx={{ 
+              fontFamily: 'inherit',
+              textTransform: 'none',
+              fontWeight: 500
+            }}
+            fullWidth
+          >
+            Close
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

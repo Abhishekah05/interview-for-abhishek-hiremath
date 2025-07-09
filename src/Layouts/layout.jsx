@@ -1,11 +1,8 @@
 import React from 'react';
-import { Container, Box, useMediaQuery, useTheme } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import Header from './header';
 
 const Layout = ({ children }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
   return (
     <Box
       sx={{
@@ -18,11 +15,8 @@ const Layout = ({ children }) => {
       <Container
         maxWidth="lg"
         sx={{
-          mt: isMobile ? 2 : 3,
-          mb: isMobile ? 2 : 3,
-          px: isMobile ? 1 : 3,
-          width: '100%',
-          maxWidth: '100%'
+          mt: 3,
+          mb: 3,
         }}
       >
         {children}
