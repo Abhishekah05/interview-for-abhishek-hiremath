@@ -7,7 +7,7 @@ import {
   useMediaQuery,
   useTheme,
   Box,
-  Grid
+  
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -44,15 +44,28 @@ const FilterControls = ({
   return (
     <Box sx={{ mb: 3 }}>
       {isMobile ? (
-        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-          <Grid item xs={6}>
+        <Box sx={{ 
+          display: 'flex',
+          gap: 1,
+          alignItems: 'flex-start'
+        }}>
+          {/* Date Range Dropdown - fixed width to prevent layout shift */}
+          <Box sx={{ 
+            flex: 1,
+            minWidth: 0  // Allow flex item to shrink below content size
+          }}>
             <DateRangeDropdown 
               value={dateRange} 
               onDateRangeChange={onDateRangeChange}
               mobile
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Box>
+          
+          {/* Filter Dropdown - fixed width, positioned to the right */}
+          <Box sx={{ 
+            minWidth: '140px',
+            maxWidth: '140px'
+          }}>
             <Button
               variant="outlined"
               endIcon={<ArrowDropDownIcon />}
@@ -62,8 +75,13 @@ const FilterControls = ({
                 textTransform: 'none',
                 fontFamily: 'inherit',
                 justifyContent: 'space-between',
-                padding: '8px 12px',
-                 marginLeft: '50px'
+                padding: '12px 16px',
+                borderRadius: 2,
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}
             >
               {getFilterLabel()}
@@ -94,8 +112,8 @@ const FilterControls = ({
                 <ListItemText primary="Failed Launches" />
               </MenuItem>
             </Menu>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       ) : (
         <Box sx={{ 
           display: 'flex',

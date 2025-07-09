@@ -12,7 +12,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -282,7 +282,7 @@ const DateRangeDropdown = ({ value, onDateRangeChange, mobile = false }) => {
     <Box sx={{ 
       display: 'flex',
       flexDirection: 'column',
-      minHeight: isMobile ? '80vh' : 'auto'
+      minHeight: isMobile ? '70vh' : 'auto'
     }}>
       <Box sx={{ 
         mb: 3
@@ -408,18 +408,38 @@ const DateRangeDropdown = ({ value, onDateRangeChange, mobile = false }) => {
           borderRadius: mobile ? 2 : 1,
           border: mobile ? '1px solid' : 'none',
           borderColor: mobile ? 'divider' : 'transparent',
+          // Fixed: Ensure consistent width in mobile view
+          width: mobile ? '100%' : 'auto',
           '&:hover': {
             backgroundColor: mobile ? 'action.hover' : 'transparent',
             borderColor: mobile ? 'primary.main' : 'transparent'
           }
         }}
       >
-        <Box display="flex" alignItems="center" gap={1}>
-          <CalendarTodayIcon sx={{ fontSize: 20 }} />
-          <Typography variant="body2" sx={{ 
-            fontSize: mobile ? '0.875rem' : '0.875rem',
-            fontWeight: 500 
-          }}>
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          gap={1}
+          sx={{
+            // Fixed: Prevent text from expanding button width
+            minWidth: 0,
+            flex: 1,
+            overflow: 'hidden'
+          }}
+        >
+          <CalendarTodayIcon sx={{ fontSize: 20, flexShrink: 0 }} />
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              fontSize: mobile ? '0.875rem' : '0.875rem',
+              fontWeight: 500,
+              // Fixed: Truncate long text to prevent layout shift
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              minWidth: 0
+            }}
+          >
             {getDisplayLabel()}
           </Typography>
         </Box>
@@ -435,8 +455,27 @@ const DateRangeDropdown = ({ value, onDateRangeChange, mobile = false }) => {
         PaperProps={{
           sx: {
             borderRadius: isMobile ? 0 : 2,
-            minHeight: isMobile ? '100vh' : 'auto'
+            minHeight: isMobile ? '100vh' : 'auto',
+            // Fixed: Add proper positioning to avoid header overlap
+            position: 'fixed',
+            top: isMobile ? 0 : 'auto',
+            left: isMobile ? 0 : 'auto',
+            right: isMobile ? 0 : 'auto',
+            bottom: isMobile ? 0 : 'auto',
+            width: isMobile ? '100vw' : 'auto',
+            height: isMobile ? '100vh' : 'auto',
+            margin: 0,
+            transform: isMobile ? 'none' : 'auto',
+            maxWidth: isMobile ? '100vw' : 'auto',
+            maxHeight: isMobile ? '100vh' : 'auto'
           }
+        }}
+        sx={{
+          // Fixed: Ensure dialog appears above header
+          '& .MuiDialog-root': {
+            zIndex: 1300
+          },
+          zIndex: 1300
         }}
       >
         <DialogTitle sx={{ 
@@ -445,7 +484,12 @@ const DateRangeDropdown = ({ value, onDateRangeChange, mobile = false }) => {
           alignItems: 'center',
           borderBottom: '1px solid',
           borderColor: 'divider',
-          py: 2
+          py: 2,
+          // Fixed: Add proper sticky positioning for mobile
+          position: isMobile ? 'sticky' : 'static',
+          top: 0,
+          backgroundColor: 'background.paper',
+          zIndex: 1
         }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Select Date Range
@@ -466,7 +510,10 @@ const DateRangeDropdown = ({ value, onDateRangeChange, mobile = false }) => {
           p: 3,
           flex: 1,
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          // Fixed: Add proper overflow handling
+          overflowY: 'auto',
+          height: isMobile ? 'calc(100vh - 80px)' : 'auto'
         }}>
           {renderContent()}
         </DialogContent>
