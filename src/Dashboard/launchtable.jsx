@@ -25,8 +25,6 @@ const LaunchTable = ({
   itemsPerPage = 10,
   isMobile 
 }) => {
-  // const theme = useTheme();
-  
   const handlePageClick = (page) => {
     if (page >= 1 && page <= totalPages) {
       onPageChange(null, page);
@@ -231,12 +229,11 @@ const LaunchTable = ({
     return items;
   };
 
-return (
+  return (
     <Box sx={{ 
       backgroundColor: 'white', 
       pb: 4,
       width: '100%',
-      overflowX: isMobile ? 'hidden' : 'auto'
     }}>
       <TableContainer
         component={Paper}
@@ -245,14 +242,9 @@ return (
           border: '1px solid #e0e0e0',
           borderRadius: 1,
           backgroundColor: 'white',
-          width: '100%',
-          overflowX: isMobile ? 'hidden' : 'auto'
         }}
       >
-        <Table sx={{ 
-          width: '100%',
-          tableLayout: isMobile ? 'auto' : 'fixed'
-        }}>
+        <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#F4F5F7' }}>
               <TableCell sx={{ 
@@ -302,11 +294,23 @@ return (
           <TableBody>
             {launches.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} sx={{ textAlign: 'center', p: 4, border: 'none' }}>
-                  <Typography variant="h6" gutterBottom sx={{ color: '#666', fontFamily: 'Inter, sans-serif' }}>
+                <TableCell colSpan={7} sx={{ 
+                  textAlign: 'center', 
+                  py: 4,
+                  borderBottom: 'none'
+                }}>
+                  <Typography variant="body1" sx={{ 
+                    color: '#666', 
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 500,
+                    mb: 1
+                  }}>
                     No results found for the specified filter
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#999', fontFamily: 'Inter, sans-serif' }}>
+                  <Typography variant="body2" sx={{ 
+                    color: '#999', 
+                    fontFamily: 'Inter, sans-serif',
+                  }}>
                     Try adjusting your filter criteria or date range
                   </Typography>
                 </TableCell>
