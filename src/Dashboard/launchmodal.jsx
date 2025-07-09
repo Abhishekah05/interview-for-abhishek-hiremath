@@ -8,8 +8,6 @@ import {
   Typography,
   Box,
   IconButton,
-  useMediaQuery,
-  useTheme,
   Avatar,
   Chip
 } from '@mui/material';
@@ -17,9 +15,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { formatDate } from '../Util/util';
 
 const LaunchModal = ({ open, launch, onClose }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   if (!launch) return null;
 
   const getStatusColor = () => {
@@ -62,90 +57,128 @@ const LaunchModal = ({ open, launch, onClose }) => {
     return 'Unknown';
   };
 
-  // Responsive styles
   const detailRowStyle = {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    py: isMobile ? 1 : 1.2,
+    alignItems: 'flex-start',
+    py: 1,
     px: 0,
     borderBottom: '1px solid #e0e0e0',
-    minHeight: isMobile ? '36px' : '40px'
+    minHeight: '36px'
   };
 
   const labelStyle = {
     fontWeight: 400,
     color: '#666',
-    fontSize: isMobile ? '13px' : '14px',
+    fontSize: '13px',
     fontFamily: 'inherit',
-    flex: isMobile ? '0 0 120px' : '0 0 140px' // Fixed width for labels
+    flex: '0 0 110px',
+    paddingTop: '2px'
   };
 
   const valueStyle = {
     fontWeight: 500,
     color: '#333',
-    fontSize: isMobile ? '13px' : '14px',
+    fontSize: '13px',
     fontFamily: 'inherit',
     textAlign: 'right',
     flex: 1,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
+    wordBreak: 'break-word',
+    lineHeight: 1.4
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
-      fullScreen={isMobile}
       PaperProps={{
         sx: {
-          borderRadius: isMobile ? 0 : 8,
-          maxHeight: isMobile ? '100vh' : '85vh',
-          height: isMobile ? '100vh' : 'auto',
-          width: isMobile ? '100%' : '500px',
-          maxWidth: isMobile ? '100%' : '500px'
+          borderRadius: 0, // Changed from 12 to 0 for square corners
+          width: '90vw',
+          maxWidth: '400px',
+          maxHeight: '85vh',
+          margin: 'auto',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }
+      }}
+      BackdropProps={{
+        sx: {
+          backgroundColor: 'rgba(0, 0, 0, 0.6)'
+        }
+      }}
+      sx={{
+        '& .MuiDialog-container': {
+          alignItems: 'center',
+          justifyContent: 'center'
         }
       }}
     >
       {/* Header Section */}
-      <DialogTitle sx={{ p: 0 }}>
-        <Box 
-          display="flex" 
-          justifyContent="space-between" 
-          alignItems="center"
-          sx={{ 
-            px: isMobile ? 2 : 3, 
-            py: isMobile ? 1.5 : 2.5,
-            backgroundColor: '#fff',
-            position: isMobile ? 'sticky' : 'static',
-            top: 0,
-            zIndex: 1,
-            borderBottom: '1px solid #e0e0e0'
+      <DialogTitle sx={{ 
+        p: 0,
+        flexShrink: 0,
+        position: 'relative'
+      }}>
+        {/* Close Button - Top Right */}
+        <IconButton 
+          onClick={onClose} 
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            zIndex: 10,
+            width: 32,
+            height: 32,
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)'
+            }
           }}
         >
-          <Box display="flex" alignItems="center" gap={isMobile ? 1 : 2}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+
+        <Box 
+          display="flex" 
+          alignItems="center"
+          sx={{ 
+            px: 3, 
+            py: 2.5,
+            backgroundColor: '#fff',
+            borderBottom: '1px solid #e0e0e0',
+            pr: 6  // Add right padding for close button
+          }}
+        >
+          <Box display="flex" alignItems="center" gap={2} sx={{ flex: 1, minWidth: 0 }}>
             <Avatar 
               src={launch.links?.patch?.small}
               sx={{ 
-                width: isMobile ? 40 : 48, 
-                height: isMobile ? 40 : 48,
+                width: 44, 
+                height: 44,
                 backgroundColor: '#f0f0f0',
-                border: '1px solid #e0e0e0'
+                border: '1px solid #e0e0e0',
+                flexShrink: 0
               }}
             >
               {!launch.links?.patch?.small && launch.name?.charAt(0)}
             </Avatar>
-            <Box>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
               <Typography variant="h6" sx={{ 
                 fontFamily: 'inherit', 
                 fontWeight: 600,
-                fontSize: isMobile ? '18px' : '20px',
+                fontSize: '18px',
                 color: '#333',
                 mb: 0.5,
-                lineHeight: 1.2
+                lineHeight: 1.2,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
               }}>
                 {launch.name}
               </Typography>
@@ -155,7 +188,7 @@ const LaunchModal = ({ open, launch, onClose }) => {
                 sx={{
                   backgroundColor: getStatusColor(),
                   color: 'white',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: 600,
                   height: '20px',
                   '& .MuiChip-label': {
@@ -165,45 +198,39 @@ const LaunchModal = ({ open, launch, onClose }) => {
               />
             </Box>
           </Box>
-          <IconButton 
-            onClick={onClose} 
-            size="small"
-            sx={{
-              position: isMobile ? 'absolute' : 'relative',
-              right: isMobile ? 8 : 0,
-              top: isMobile ? 8 : 0
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
         </Box>
       </DialogTitle>
 
       {/* Content Section */}
       <DialogContent sx={{ 
         p: 0,
+        flex: 1,
         overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
         '&::-webkit-scrollbar': {
-          width: '6px'
+          width: '4px'
         },
         '&::-webkit-scrollbar-thumb': {
           backgroundColor: '#ccc',
-          borderRadius: '3px'
+          borderRadius: '2px'
         }
       }}>
         {/* Mission Description */}
         {launch.details && (
           <Box sx={{ 
-            px: isMobile ? 2 : 3, 
-            py: isMobile ? 1.5 : 2,
+            px: 3, 
+            py: 2,
             backgroundColor: '#f8f9fa',
-            borderBottom: '1px solid #e0e0e0'
+            borderBottom: '1px solid #e0e0e0',
+            flexShrink: 0
           }}>
             <Typography variant="body2" sx={{ 
               fontFamily: 'inherit', 
               lineHeight: 1.5,
               color: '#555',
-              fontSize: isMobile ? '13px' : '14px'
+              fontSize: '13px',
+              mb: launch.links?.wikipedia ? 1 : 0
             }}>
               {launch.details}
             </Typography>
@@ -216,10 +243,9 @@ const LaunchModal = ({ open, launch, onClose }) => {
                 sx={{
                   color: '#1976d2',
                   textDecoration: 'none',
-                  fontSize: isMobile ? '13px' : '14px',
+                  fontSize: '13px',
                   fontWeight: 500,
                   display: 'inline-block',
-                  mt: 1,
                   '&:hover': {
                     textDecoration: 'underline'
                   }
@@ -233,8 +259,9 @@ const LaunchModal = ({ open, launch, onClose }) => {
 
         {/* Details Section */}
         <Box sx={{ 
-          px: isMobile ? 2 : 3,
-          py: isMobile ? 1.5 : 2
+          px: 3,
+          py: 2,
+          flex: 1
         }}>
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Flight Number</Typography>
@@ -269,7 +296,7 @@ const LaunchModal = ({ open, launch, onClose }) => {
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Launch Date</Typography>
             <Typography sx={valueStyle}>
-              {launch.date_utc ? formatDate(launch.date_utc, isMobile) : 'Unknown'}
+              {launch.date_utc ? formatDate(launch.date_utc, true) : 'Unknown'}
             </Typography>
           </Box>
 
@@ -297,33 +324,30 @@ const LaunchModal = ({ open, launch, onClose }) => {
         </Box>
       </DialogContent>
 
-      {/* Mobile Footer */}
-      {isMobile && (
-        <DialogActions sx={{ 
-          p: 2, 
-          borderTop: '1px solid #e0e0e0',
-          backgroundColor: '#fff',
-          position: 'sticky',
-          bottom: 0,
-          zIndex: 1
-        }}>
-          <Button 
-            onClick={onClose} 
-            color="primary" 
-            variant="contained"
-            sx={{ 
-              fontFamily: 'inherit',
-              textTransform: 'none',
-              fontWeight: 500,
-              borderRadius: '6px',
-              py: 1
-            }}
-            fullWidth
-          >
-            Close
-          </Button>
-        </DialogActions>
-      )}
+      {/* Footer */}
+      <DialogActions sx={{ 
+        p: 2, 
+        borderTop: '1px solid #e0e0e0',
+        backgroundColor: '#fff',
+        flexShrink: 0
+      }}>
+        <Button 
+          onClick={onClose} 
+          color="primary" 
+          variant="contained"
+          sx={{ 
+            fontFamily: 'inherit',
+            textTransform: 'none',
+            fontWeight: 500,
+            borderRadius: '8px',
+            py: 1.2,
+            fontSize: '14px'
+          }}
+          fullWidth
+        >
+          Close
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

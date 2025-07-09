@@ -46,13 +46,14 @@ const FilterControls = ({
       {isMobile ? (
         <Box sx={{ 
           display: 'flex',
-          gap: 1,
-          alignItems: 'flex-start'
+          gap: 2, // Increased gap for better spacing
+          alignItems: 'flex-start',
+          px: 1 // Add horizontal padding for proper alignment
         }}>
-          {/* Date Range Dropdown - fixed width to prevent layout shift */}
+          {/* Date Range Dropdown - matching width and height */}
           <Box sx={{ 
             flex: 1,
-            minWidth: 0  // Allow flex item to shrink below content size
+            minWidth: 0
           }}>
             <DateRangeDropdown 
               value={dateRange} 
@@ -61,10 +62,10 @@ const FilterControls = ({
             />
           </Box>
           
-          {/* Filter Dropdown - fixed width, positioned to the right */}
+          {/* Filter Dropdown - matching width and height */}
           <Box sx={{ 
-            minWidth: '140px',
-            maxWidth: '140px'
+            flex: 1,
+            minWidth: 0
           }}>
             <Button
               variant="outlined"
@@ -75,13 +76,15 @@ const FilterControls = ({
                 textTransform: 'none',
                 fontFamily: 'inherit',
                 justifyContent: 'space-between',
-                padding: '12px 16px',
-                borderRadius: 2,
+                padding: '6px 12px', // Match DateRangeDropdown padding
+                borderRadius: 1, // Match DateRangeDropdown border radius
                 fontSize: '0.875rem',
-                fontWeight: 500,
+                fontWeight: 400, // Match DateRangeDropdown font weight
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                textOverflow: 'ellipsis',
+                height: 'auto', // Let height be determined by padding
+                minHeight: 'auto'
               }}
             >
               {getFilterLabel()}
@@ -92,25 +95,129 @@ const FilterControls = ({
               onClose={() => setFilterMenuAnchor(null)}
               anchorOrigin={{
                 vertical: 'bottom',
-                horizontal: 'right',
+                horizontal: 'left', // Changed to left to match DateRangeDropdown
               }}
               transformOrigin={{
                 vertical: 'top',
-                horizontal: 'right',
+                horizontal: 'left', // Changed to left to match DateRangeDropdown
+              }}
+              PaperProps={{
+                sx: { 
+                  width: '180px', // Match DateRangeDropdown menu width
+                  maxWidth: '180px',
+                  maxHeight: '80vh',
+                  overflow: 'auto',
+                  borderRadius: 2,
+                  py: 1
+                }
               }}
             >
-              <MenuItem onClick={() => handleFilterChange('all')}>
-                <ListItemText primary="All Launches" />
-              </MenuItem>
-              <MenuItem onClick={() => handleFilterChange('upcoming')}>
-                <ListItemText primary="Upcoming Launches" />
-              </MenuItem>
-              <MenuItem onClick={() => handleFilterChange('successful')}>
-                <ListItemText primary="Successful Launches" />
-              </MenuItem>
-              <MenuItem onClick={() => handleFilterChange('failed')}>
-                <ListItemText primary="Failed Launches" />
-              </MenuItem>
+              <Box sx={{ p: 1 }}>
+                <MenuItem 
+                  onClick={() => handleFilterChange('all')}
+                  sx={{
+                    fontSize: '0.875rem',
+                    py: 1,
+                    px: 2,
+                    borderRadius: 1,
+                    backgroundColor: filter === 'all' ? theme.palette.primary.light : 'transparent',
+                    color: filter === 'all' ? theme.palette.primary.contrastText : 'inherit',
+                    minHeight: 'auto',
+                    whiteSpace: 'nowrap', // Prevent text wrapping
+                    '&:hover': {
+                      backgroundColor: filter === 'all' ? theme.palette.primary.light : 'rgba(0, 0, 0, 0.04)'
+                    }
+                  }}
+                >
+                  <ListItemText 
+                    primary="All Launches" 
+                    sx={{ 
+                      '& .MuiTypography-root': { 
+                        fontSize: '0.875rem',
+                        whiteSpace: 'nowrap'
+                      } 
+                    }} 
+                  />
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleFilterChange('upcoming')}
+                  sx={{
+                    fontSize: '0.875rem',
+                    py: 1,
+                    px: 2,
+                    borderRadius: 1,
+                    backgroundColor: filter === 'upcoming' ? theme.palette.primary.light : 'transparent',
+                    color: filter === 'upcoming' ? theme.palette.primary.contrastText : 'inherit',
+                    minHeight: 'auto',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      backgroundColor: filter === 'upcoming' ? theme.palette.primary.light : 'rgba(0, 0, 0, 0.04)'
+                    }
+                  }}
+                >
+                  <ListItemText 
+                    primary="Upcoming Launches" 
+                    sx={{ 
+                      '& .MuiTypography-root': { 
+                        fontSize: '0.875rem',
+                        whiteSpace: 'nowrap'
+                      } 
+                    }} 
+                  />
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleFilterChange('successful')}
+                  sx={{
+                    fontSize: '0.875rem',
+                    py: 1,
+                    px: 2,
+                    borderRadius: 1,
+                    backgroundColor: filter === 'successful' ? theme.palette.primary.light : 'transparent',
+                    color: filter === 'successful' ? theme.palette.primary.contrastText : 'inherit',
+                    minHeight: 'auto',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      backgroundColor: filter === 'successful' ? theme.palette.primary.light : 'rgba(0, 0, 0, 0.04)'
+                    }
+                  }}
+                >
+                  <ListItemText 
+                    primary="Successful Launches" 
+                    sx={{ 
+                      '& .MuiTypography-root': { 
+                        fontSize: '0.875rem',
+                        whiteSpace: 'nowrap'
+                      } 
+                    }} 
+                  />
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleFilterChange('failed')}
+                  sx={{
+                    fontSize: '0.875rem',
+                    py: 1,
+                    px: 2,
+                    borderRadius: 1,
+                    backgroundColor: filter === 'failed' ? theme.palette.primary.light : 'transparent',
+                    color: filter === 'failed' ? theme.palette.primary.contrastText : 'inherit',
+                    minHeight: 'auto',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      backgroundColor: filter === 'failed' ? theme.palette.primary.light : 'rgba(0, 0, 0, 0.04)'
+                    }
+                  }}
+                >
+                  <ListItemText 
+                    primary="Failed Launches" 
+                    sx={{ 
+                      '& .MuiTypography-root': { 
+                        fontSize: '0.875rem',
+                        whiteSpace: 'nowrap'
+                      } 
+                    }} 
+                  />
+                </MenuItem>
+              </Box>
             </Menu>
           </Box>
         </Box>
