@@ -1,373 +1,131 @@
 import React from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Box,
+  Typography,
+  Divider,
   IconButton,
-  Typography
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StatusChip from './statuschip';
 import { formatDate } from '../Util/util';
 
-const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageChange, itemsPerPage = 10 }) => {
+const LaunchTable = ({ launches, onLaunchClick, currentPage, totalPages, onPageChange }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const handlePageClick = (page) => {
     if (page >= 1 && page <= totalPages) {
       onPageChange(null, page);
     }
   };
 
-  // Helper function to get orbit information
-  const getOrbitInfo = (launch) => {
-    if (launch.payloadObjects && launch.payloadObjects.length > 0) {
-      // Get the first payload's orbit, or combine multiple orbits
-      const orbits = launch.payloadObjects
-        .map(payload => payload.orbit)
-        .filter(orbit => orbit && orbit !== 'unknown')
-        .filter((orbit, index, self) => self.indexOf(orbit) === index); // Remove duplicates
-      
-      if (orbits.length > 0) {
-        return orbits.join(', ');
-      }
-    }
-    
-    // Fallback to the original method if payloadObjects is not available
-    if (launch.payloads && launch.payloads.length > 0) {
-      const firstPayload = launch.payloads[0];
-      if (typeof firstPayload === 'object' && firstPayload.orbit) {
-        return firstPayload.orbit;
-      }
-    }
-    
-    return 'Unknown';
-  };
-
-  const renderPaginationItems = () => {
-    const items = [];
-    const maxVisible = 7;
-    let startPage = 1;
-    let endPage = totalPages;
-
-    if (totalPages > maxVisible) {
-      const halfVisible = Math.floor(maxVisible / 2);
-      
-      if (currentPage <= halfVisible) {
-        // Show first pages
-        startPage = 1;
-        endPage = maxVisible - 1;
-      } else if (currentPage >= totalPages - halfVisible) {
-        // Show last pages
-        startPage = totalPages - maxVisible + 2;
-        endPage = totalPages;
-      } else {
-        // Show middle pages
-        startPage = currentPage - halfVisible + 1;
-        endPage = currentPage + halfVisible - 1;
-      }
-    }
-
-    // Previous button
-    items.push(
-      <IconButton
-        key="prev"
-        disabled={currentPage === 1}
-        onClick={() => handlePageClick(currentPage - 1)}
-        sx={{
-          width: 36,
-          height: 36,
-          borderRadius: '4px',
-          mx: 0.5,
-          color: currentPage === 1 ? '#ccc' : '#333',
-          backgroundColor: '#fff',
-          border: '1px solid #e0e0e0',
-          fontFamily: 'Inter, sans-serif',
-          '&:hover': {
-            backgroundColor: currentPage === 1 ? '#fff' : '#f9f9f9',
-          }
-        }}
-      >
-        <ChevronLeftIcon fontSize="small" />
-      </IconButton>
-    );
-
-    // First page (if not in visible range)
-    if (startPage > 1) {
-      items.push(
-        <Box
-          key={1}
-          onClick={() => handlePageClick(1)}
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: '4px',
-            mx: 0.5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '0.875rem',
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: 1 === currentPage ? 'bold' : 'normal',
-            backgroundColor: 1 === currentPage ? '#1976d2' : '#fff',
-            color: 1 === currentPage ? '#fff' : '#333',
-            border: '1px solid #e0e0e0',
-            cursor: 'pointer',
-            '&:hover': {
-              backgroundColor: 1 === currentPage ? '#1565c0' : '#f5f5f5',
-            }
-          }}
-        >
-          1
-        </Box>
-      );
-
-      if (startPage > 2) {
-        items.push(
-          <Typography key="dots1" sx={{ mx: 1, fontSize: '0.875rem', color: '#999', fontFamily: 'Inter, sans-serif' }}>
-            ...
-          </Typography>
-        );
-      }
-    }
-
-    // Visible page range
-    for (let i = startPage; i <= endPage; i++) {
-      items.push(
-        <Box
-          key={i}
-          onClick={() => handlePageClick(i)}
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: '4px',
-            mx: 0.5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '0.875rem',
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: i === currentPage ? 'bold' : 'normal',
-            backgroundColor: i === currentPage ? '#1976d2' : '#fff',
-            color: i === currentPage ? '#fff' : '#333',
-            border: '1px solid #e0e0e0',
-            cursor: 'pointer',
-            '&:hover': {
-              backgroundColor: i === currentPage ? '#1565c0' : '#f5f5f5',
-            }
-          }}
-        >
-          {i}
-        </Box>
-      );
-    }
-
-    // Last page (if not in visible range)
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        items.push(
-          <Typography key="dots2" sx={{ mx: 1, fontSize: '0.875rem', color: '#999', fontFamily: 'Inter, sans-serif' }}>
-            ...
-          </Typography>
-        );
-      }
-
-      items.push(
-        <Box
-          key={totalPages}
-          onClick={() => handlePageClick(totalPages)}
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: '4px',
-            mx: 0.5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '0.875rem',
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: totalPages === currentPage ? 'bold' : 'normal',
-            backgroundColor: totalPages === currentPage ? '#1976d2' : '#fff',
-            color: totalPages === currentPage ? '#fff' : '#333',
-            border: '1px solid #e0e0e0',
-            cursor: 'pointer',
-            '&:hover': {
-              backgroundColor: totalPages === currentPage ? '#1565c0' : '#f5f5f5',
-            }
-          }}
-        >
-          {totalPages}
-        </Box>
-      );
-    }
-
-    // Next button
-    items.push(
-      <IconButton
-        key="next"
-        disabled={currentPage === totalPages}
-        onClick={() => handlePageClick(currentPage + 1)}
-        sx={{
-          width: 36,
-          height: 36,
-          borderRadius: '4px',
-          mx: 0.5,
-          color: currentPage === totalPages ? '#ccc' : '#333',
-          backgroundColor: '#fff',
-          border: '1px solid #e0e0e0',
-          fontFamily: 'Inter, sans-serif',
-          '&:hover': {
-            backgroundColor: currentPage === totalPages ? '#fff' : '#f9f9f9',
-          }
-        }}
-      >
-        <ChevronRightIcon fontSize="small" />
-      </IconButton>
-    );
-
-    return items;
-  };
-
   return (
-    <Box sx={{ backgroundColor: 'white', minHeight: '100vh', pb: 4 }}>
-      <TableContainer
-        component={Paper}
-        sx={{
-          boxShadow: 'none',
-          border: '1px solid #e0e0e0',
-          borderRadius: 1,
-          backgroundColor: 'white'
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: '#F4F5F7' }}>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>No.</TableCell>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>Launched (UTC)</TableCell>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>Location</TableCell>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>Mission</TableCell>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>Orbit</TableCell>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>Launch Status</TableCell>
-              <TableCell sx={{ 
-                // fontWeight: 'bold', 
-                fontSize: '0.875rem',
-                color: '#4B5563',
-                fontFamily: 'Inter, sans-serif'
-              }}>Rocket</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {launches.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} sx={{ textAlign: 'center', p: 4, border: 'none' }}>
-                  <Typography variant="h6" gutterBottom sx={{ 
-                    color: '#666',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    No results found for the specified filter
-                  </Typography>
-                  <Typography variant="body2" sx={{ 
-                    color: '#999',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Try adjusting your filter criteria or date range
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              launches.map((launch, index) => (
-                <TableRow
-                  key={launch.id}
-                  onClick={() => onLaunchClick(launch)}
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: '#f9f9f9',
-                      cursor: 'pointer',
-                    },
-                  }}
-                >
-                  <TableCell sx={{ 
-                    fontSize: '0.875rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    {String((currentPage - 1) * itemsPerPage + index + 1).padStart(2, '0')}
-                  </TableCell>
-                  <TableCell sx={{ 
-                    fontSize: '0.875rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>{formatDate(launch.date_utc)}</TableCell>
-                  <TableCell sx={{ 
-                    fontSize: '0.875rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>{launch.launchpad?.name || 'Unknown'}</TableCell>
-                  <TableCell sx={{ 
-                    fontSize: '0.875rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>{launch.name}</TableCell>
-                  <TableCell sx={{ 
-                    fontSize: '0.875rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>{getOrbitInfo(launch)}</TableCell>
-                  <TableCell><StatusChip launch={launch} /></TableCell>
-                  <TableCell sx={{ 
-                    fontSize: '0.875rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>{launch.rocket?.name || 'Unknown'}</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Box sx={{ 
+      backgroundColor: 'white', 
+      minHeight: '100vh',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      {/* Header */}
+      <Typography variant="h4" sx={{ 
+        fontWeight: 'bold', 
+        mb: 1,
+        px: isMobile ? 2 : 0
+      }}>
+        SPACEX
+      </Typography>
+      
+      {/* Filter info */}
+      <Typography variant="body1" sx={{ 
+        color: '#666',
+        mb: 3,
+        px: isMobile ? 2 : 0
+      }}>
+        All time<br />
+        All Launches
+      </Typography>
+      
+      <Divider sx={{ my: 2 }} />
 
-      {totalPages > 1 && launches.length > 0 && (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            mt: 3,
-            pr: 2, // right padding
-            backgroundColor: 'white'
-          }}
+      {/* Launches list */}
+      <Box sx={{ mb: 4 }}>
+        {launches.map((launch) => (
+          <Box key={launch.id} sx={{ mb: 3, px: isMobile ? 2 : 0 }}>
+            <Typography variant="h6" sx={{ 
+              fontWeight: 'bold',
+              mb: 1
+            }}>
+              {launch.name}
+            </Typography>
+            
+            <Typography variant="body2" sx={{ 
+              color: '#666',
+              mb: 0.5
+            }}>
+              • {formatDate(launch.date_utc)}
+            </Typography>
+            
+            <Typography variant="body2" sx={{ 
+              color: '#666',
+              mb: 0.5
+            }}>
+              • {launch.launchpad?.name || 'Unknown location'}
+            </Typography>
+            
+            <Typography variant="body2" sx={{ 
+              color: '#666',
+              mb: 0.5
+            }}>
+              • {launch.rocket?.name || 'Unknown rocket'}
+            </Typography>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" sx={{ 
+                color: '#666',
+                mr: 1
+              }}>
+                •
+              </Typography>
+              <StatusChip launch={launch} />
+            </Box>
+            
+            <Divider sx={{ mt: 2 }} />
+          </Box>
+        ))}
+      </Box>
+
+      {/* Pagination */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        mt: 3,
+        px: isMobile ? 2 : 0
+      }}>
+        <IconButton 
+          disabled={currentPage === 1}
+          onClick={() => handlePageClick(currentPage - 1)}
+          size="small"
+          sx={{ mx: 1 }}
         >
-          {renderPaginationItems()}
-        </Box>
-      )}
+          <ChevronLeftIcon />
+        </IconButton>
+        
+        <Typography variant="body2" sx={{ mx: 1 }}>
+          Page {currentPage} of {totalPages}
+        </Typography>
+        
+        <IconButton 
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageClick(currentPage + 1)}
+          size="small"
+          sx={{ mx: 1 }}
+        >
+          <ChevronRightIcon />
+        </IconButton>
+      </Box>
     </Box>
   );
 };

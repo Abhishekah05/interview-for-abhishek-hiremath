@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Grid, useMediaQuery, useTheme ,Box,Typography,IconButton} from '@mui/material';
 import Layout from '../Layouts/layout';
 import FilterControls from './filtercontrol';
 import LaunchTable from './launchtable';
@@ -8,10 +8,14 @@ import LaunchModal from './launchmodal';
 import LoadingSpinner from './loadingspinner';
 import EmptyState from './emptystate';
 import { filterLaunchesByDateRange } from '../Util/util';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
+
 
 const SpaceXDashboard = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
   const [launches, setLaunches] = useState([]);
   const [filteredLaunches, setFilteredLaunches] = useState([]);
@@ -22,15 +26,13 @@ const SpaceXDashboard = () => {
   const [dateRange, setDateRange] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   
-  const itemsPerPage = 10;
+  const itemsPerPage = isMobile ? 5 : 10;
 
-  // Fetch launches, launchpads, rockets, and payloads on component mount
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
         
-        // Fetch all data concurrently
         const [launchesResponse, launchpadsResponse, rocketsResponse, payloadsResponse] = await Promise.all([
           fetch('https://api.spacexdata.com/v5/launches'),
           fetch('https://api.spacexdata.com/v4/launchpads'),
@@ -45,7 +47,6 @@ const SpaceXDashboard = () => {
           payloadsResponse.json()
         ]);
         
-        // Create lookup maps
         const launchpadsMap = {};
         launchpadsData.forEach(pad => {
           launchpadsMap[pad.id] = pad;
@@ -61,9 +62,7 @@ const SpaceXDashboard = () => {
           payloadsMap[payload.id] = payload;
         });
         
-        // Combine data
         const enrichedLaunches = launchesData.map(launch => {
-          // Get payload information
           const payloadObjects = launch.payloads ? launch.payloads.map(payloadId => payloadsMap[payloadId]).filter(Boolean) : [];
           
           return {
@@ -75,7 +74,6 @@ const SpaceXDashboard = () => {
         });
         
         setLaunches(enrichedLaunches);
-        console.log('Loaded launches:', enrichedLaunches.length);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -86,19 +84,13 @@ const SpaceXDashboard = () => {
     loadData();
   }, []);
 
-  // Filter launches based on selected filter and date range
   useEffect(() => {
     let filtered = [...launches];
     
-    console.log('Original launches:', launches.length);
-    
-    // Apply date range filter first (only if not 'all')
     if (dateRange && dateRange !== 'all') {
       filtered = filterLaunchesByDateRange(filtered, dateRange);
-      console.log('After date filter:', filtered.length);
     }
     
-    // Apply status filter
     switch (filter) {
       case 'upcoming':
         filtered = filtered.filter(launch => launch.upcoming);
@@ -110,14 +102,11 @@ const SpaceXDashboard = () => {
         filtered = filtered.filter(launch => launch.success === false);
         break;
       default:
-        // 'all' - no additional filtering needed
         break;
     }
     
-    console.log('After status filter:', filtered.length);
-    
     setFilteredLaunches(filtered);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1);
   }, [filter, dateRange, launches]);
 
   const handleLaunchClick = (launch) => {
@@ -142,7 +131,6 @@ const SpaceXDashboard = () => {
     setCurrentPage(page);
   };
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredLaunches.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -163,12 +151,13 @@ const SpaceXDashboard = () => {
         onFilterChange={handleFilterChange}
         dateRange={dateRange}
         onDateRangeChange={handleDateRangeChange}
+        isMobile={isMobile}
       />
       
       {filteredLaunches.length === 0 ? (
         <EmptyState 
-          title="No results found for the specified filter"
-          subtitle="Try adjusting your filter criteria or date range"
+          title="No results found"
+          subtitle="Try adjusting your filter criteria"
         />
       ) : (
         <>
@@ -176,7 +165,7 @@ const SpaceXDashboard = () => {
             <Grid container spacing={2}>
               {currentLaunches.map((launch) => (
                 <Grid item xs={12} key={launch.id}>
-                  <LaunchCard launch={launch} onClick={handleLaunchClick} />
+                  <LaunchCard launch={launch} onClick={handleLaunchClick} isMobile={isMobile} />
                 </Grid>
               ))}
             </Grid>
@@ -187,15 +176,41 @@ const SpaceXDashboard = () => {
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
+              itemsPerPage={itemsPerPage}
             />
           )}
         </>
+      )}
+
+      {isMobile && filteredLaunches.length > 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <IconButton 
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(null, currentPage - 1)}
+              size="small"
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+            <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center' }}>
+              Page {currentPage} of {totalPages}
+            </Typography>
+            <IconButton 
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(null, currentPage + 1)}
+              size="small"
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
+        </Box>
       )}
 
       <LaunchModal 
         open={dialogOpen} 
         launch={selectedLaunch} 
         onClose={handleCloseDialog} 
+        isMobile={isMobile}
       />
     </Layout>
   );

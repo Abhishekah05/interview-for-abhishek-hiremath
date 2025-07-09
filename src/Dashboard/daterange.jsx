@@ -16,10 +16,8 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-const DateRangeDropdown = ({ value, onDateRangeChange }) => {
+const DateRangeDropdown = ({ value, onDateRangeChange, isMobile }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -114,7 +112,6 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
           )}
         </Box>
         
-        {/* Week day headers */}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0, mb: 1 }}>
           {weekDays.map((day) => (
             <Box key={day} sx={{ 
@@ -134,7 +131,6 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
           ))}
         </Box>
         
-        {/* Calendar days */}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0 }}>
           {days.map((day, index) => (
             <Box key={index} sx={{ 
@@ -165,13 +161,10 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row'
       }}>
-        {/* First month with navigation */}
         {renderCalendarMonth(currentMonth, true)}
         
-        {/* Divider */}
         <Divider orientation={isMobile ? 'horizontal' : 'vertical'} flexItem />
         
-        {/* Second month without navigation */}
         {!isMobile && renderCalendarMonth(nextMonth, false)}
       </Box>
     );
@@ -180,7 +173,7 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
   return (
     <>
       <Button
-        variant="text"
+        variant={isMobile ? "outlined" : "text"}
         endIcon={<ArrowDropDownIcon />}
         onClick={handleClick}
         sx={{
@@ -190,11 +183,11 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
           display: 'flex',
           alignItems: 'center',
           gap: 1,
-          padding: isMobile ? '6px 8px' : '8px 12px',
+          padding: isMobile ? '6px 12px' : '8px 12px',
           fontSize: isMobile ? '14px' : '16px',
-          minWidth: isMobile ? 'auto' : 'auto',
+          minWidth: 'auto',
           '&:hover': {
-            backgroundColor: 'transparent'
+            backgroundColor: isMobile ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
           }
         }}
       >
@@ -210,8 +203,8 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
         onClose={handleClose}
         PaperProps={{
           sx: { 
-            minWidth: isMobile ? 280 : isTablet ? 500 : 650, 
-            maxWidth: isMobile ? '95vw' : isTablet ? '90vw' : 700,
+            minWidth: isMobile ? 280 : 650, 
+            maxWidth: isMobile ? '95vw' : 700,
             maxHeight: isMobile ? '80vh' : 'auto'
           }
         }}
@@ -220,7 +213,6 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row'
         }}>
-          {/* Left side - Preset options */}
           <Box sx={{ 
             minWidth: isMobile ? 'auto' : 150, 
             borderRight: isMobile ? 'none' : '1px solid #e0e0e0',
@@ -249,7 +241,6 @@ const DateRangeDropdown = ({ value, onDateRangeChange }) => {
             </MenuItem>
           </Box>
           
-          {/* Right side - Calendar */}
           <Box>
             {renderDualCalendar()}
           </Box>

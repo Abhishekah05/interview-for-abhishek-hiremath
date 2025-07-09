@@ -16,10 +16,10 @@ const FilterControls = ({
   filter, 
   onFilterChange, 
   dateRange = 'all',
-  onDateRangeChange 
+  onDateRangeChange,
+  isMobile
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [filterMenuAnchor, setFilterMenuAnchor] = React.useState(null);
 
   const handleFilterChange = (newFilter) => {
@@ -30,11 +30,11 @@ const FilterControls = ({
   const getFilterLabel = () => {
     switch (filter) {
       case 'upcoming':
-        return 'Upcoming Launches';
+        return 'Upcoming';
       case 'successful':
-        return 'Successful Launches';
+        return 'Successful';
       case 'failed':
-        return 'Failed Launches';
+        return 'Failed';
       default:
         return 'All Launches';
     }
@@ -48,99 +48,62 @@ const FilterControls = ({
         mb: 3,
         alignItems: 'center',
         flexWrap: 'wrap',
-        justifyContent: isMobile ? 'flex-start' : 'space-between',
-        width: '100%'
+        justifyContent: isMobile ? 'center' : 'space-between'
       }}
     >
       <DateRangeDropdown 
         value={dateRange} 
         onDateRangeChange={onDateRangeChange} 
+        isMobile={isMobile}
       />
 
-      {isMobile ? (
-        <>
-          <Button
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-            onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
-            sx={{
-              textTransform: 'none',
-              fontFamily: 'inherit',
-              fontSize: '14px',
-              minWidth: 'auto',
-              flexShrink: 0
-            }}
-          >
-            {getFilterLabel()}
-          </Button>
-          <Menu
-            anchorEl={filterMenuAnchor}
-            open={Boolean(filterMenuAnchor)}
-            onClose={() => setFilterMenuAnchor(null)}
-            PaperProps={{
-              sx: {
-                minWidth: '200px',
-                maxWidth: '90vw'
-              }
-            }}
-          >
-            <MenuItem onClick={() => handleFilterChange('all')}>
-              <ListItemText primary="All Launches" />
-            </MenuItem>
-            <MenuItem onClick={() => handleFilterChange('upcoming')}>
-              <ListItemText primary="Upcoming Launches" />
-            </MenuItem>
-            <MenuItem onClick={() => handleFilterChange('successful')}>
-              <ListItemText primary="Successful Launches" />
-            </MenuItem>
-            <MenuItem onClick={() => handleFilterChange('failed')}>
-              <ListItemText primary="Failed Launches" />
-            </MenuItem>
-          </Menu>
-        </>
-      ) : (
-        <>
-          <Button
-            variant="text"
-            endIcon={<ArrowDropDownIcon />}
-            onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
-            sx={{
-              textTransform: 'none',
-              fontFamily: 'inherit',
-              color: 'text.primary',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              padding: '8px 12px',
-              '&:hover': {
-                backgroundColor: 'transparent'
-              }
-            }}
-          >
-            <FilterListIcon sx={{ fontSize: 20 }} />
-            {getFilterLabel()}
-          </Button>
-          
-          <Menu
-            anchorEl={filterMenuAnchor}
-            open={Boolean(filterMenuAnchor)}
-            onClose={() => setFilterMenuAnchor(null)}
-          >
-            <MenuItem onClick={() => handleFilterChange('all')}>
-              <ListItemText primary="All Launches" />
-            </MenuItem>
-            <MenuItem onClick={() => handleFilterChange('upcoming')}>
-              <ListItemText primary="Upcoming Launches" />
-            </MenuItem>
-            <MenuItem onClick={() => handleFilterChange('successful')}>
-              <ListItemText primary="Successful Launches" />
-            </MenuItem>
-            <MenuItem onClick={() => handleFilterChange('failed')}>
-              <ListItemText primary="Failed Launches" />
-            </MenuItem>
-          </Menu>
-        </>
-      )}
+      <Button
+        variant={isMobile ? "outlined" : "text"}
+        startIcon={isMobile ? <FilterListIcon /> : null}
+        endIcon={<ArrowDropDownIcon />}
+        onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
+        sx={{
+          textTransform: 'none',
+          fontFamily: 'inherit',
+          color: 'text.primary',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          padding: isMobile ? '6px 12px' : '8px 12px',
+          fontSize: isMobile ? '14px' : '16px',
+          minWidth: 'auto',
+          '&:hover': {
+            backgroundColor: isMobile ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
+          }
+        }}
+      >
+        {!isMobile && <FilterListIcon sx={{ fontSize: 20 }} />}
+        {getFilterLabel()}
+      </Button>
+      
+      <Menu
+        anchorEl={filterMenuAnchor}
+        open={Boolean(filterMenuAnchor)}
+        onClose={() => setFilterMenuAnchor(null)}
+        PaperProps={{
+          sx: { 
+            minWidth: isMobile ? 200 : 240,
+          }
+        }}
+      >
+        <MenuItem onClick={() => handleFilterChange('all')}>
+          <ListItemText primary="All Launches" />
+        </MenuItem>
+        <MenuItem onClick={() => handleFilterChange('upcoming')}>
+          <ListItemText primary="Upcoming Launches" />
+        </MenuItem>
+        <MenuItem onClick={() => handleFilterChange('successful')}>
+          <ListItemText primary="Successful Launches" />
+        </MenuItem>
+        <MenuItem onClick={() => handleFilterChange('failed')}>
+          <ListItemText primary="Failed Launches" />
+        </MenuItem>
+      </Menu>
     </Box>
   );
 };

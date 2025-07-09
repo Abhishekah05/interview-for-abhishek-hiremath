@@ -7,22 +7,17 @@ import LocationOn from '@mui/icons-material/LocationOn';
 import Flight from '@mui/icons-material/Flight';
 import Launch from '@mui/icons-material/Launch';
 
-const LaunchCard = ({ launch, onClick }) => {
-  // Helper function to get orbit information
+const LaunchCard = ({ launch, onClick, isMobile }) => {
   const getOrbitInfo = (launch) => {
     if (launch.payloadObjects && launch.payloadObjects.length > 0) {
-      // Get the first payload's orbit, or combine multiple orbits
       const orbits = launch.payloadObjects
         .map(payload => payload.orbit)
         .filter(orbit => orbit && orbit !== 'unknown')
-        .filter((orbit, index, self) => self.indexOf(orbit) === index); // Remove duplicates
+        .filter((orbit, index, self) => self.indexOf(orbit) === index);
       
-      if (orbits.length > 0) {
-        return orbits.join(', ');
-      }
+      if (orbits.length > 0) return orbits.join(', ');
     }
     
-    // Fallback to the original method if payloadObjects is not available
     if (launch.payloads && launch.payloads.length > 0) {
       const firstPayload = launch.payloads[0];
       if (typeof firstPayload === 'object' && firstPayload.orbit) {
@@ -45,7 +40,7 @@ const LaunchCard = ({ launch, onClick }) => {
         }
       }}
     >
-      <CardContent sx={{ padding: 2 }}>
+      <CardContent sx={{ padding: isMobile ? 1.5 : 2 }}>
         <Box sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -53,7 +48,7 @@ const LaunchCard = ({ launch, onClick }) => {
           marginBottom: 1
         }}>
           <Typography 
-            variant="h6" 
+            variant={isMobile ? "subtitle1" : "h6"} 
             component="h3"
             sx={{ fontFamily: 'Inter, sans-serif' }}
           >
@@ -71,11 +66,11 @@ const LaunchCard = ({ launch, onClick }) => {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            fontSize: '0.9rem',
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
             color: '#666',
             fontFamily: 'Inter, sans-serif'
           }}>
-            <CalendarToday fontSize="small" />
+            <CalendarToday fontSize={isMobile ? "small" : "medium"} />
             <span>{formatDate(launch.date_utc)}</span>
           </Box>
           
@@ -83,11 +78,11 @@ const LaunchCard = ({ launch, onClick }) => {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            fontSize: '0.9rem',
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
             color: '#666',
             fontFamily: 'Inter, sans-serif'
           }}>
-            <LocationOn fontSize="small" />
+            <LocationOn fontSize={isMobile ? "small" : "medium"} />
             <span>{launch.launchpad?.name || 'Unknown'}</span>
           </Box>
           
@@ -95,11 +90,11 @@ const LaunchCard = ({ launch, onClick }) => {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            fontSize: '0.9rem',
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
             color: '#666',
             fontFamily: 'Inter, sans-serif'
           }}>
-            <Flight fontSize="small" />
+            <Flight fontSize={isMobile ? "small" : "medium"} />
             <span>{launch.rocket?.name || 'Unknown'}</span>
           </Box>
           
@@ -107,11 +102,11 @@ const LaunchCard = ({ launch, onClick }) => {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            fontSize: '0.9rem',
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
             color: '#666',
             fontFamily: 'Inter, sans-serif'
           }}>
-            <Launch fontSize="small" />
+            <Launch fontSize={isMobile ? "small" : "medium"} />
             <span>{getOrbitInfo(launch)}</span>
           </Box>
         </Box>
