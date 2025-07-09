@@ -1,5 +1,6 @@
+// LaunchTable.js
 import React from 'react';
-import {
+import { 
   Table,
   TableBody,
   TableCell,
@@ -10,6 +11,7 @@ import {
   Box,
   IconButton,
   Typography,
+  CircularProgress
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -23,7 +25,8 @@ const LaunchTable = ({
   totalPages, 
   onPageChange, 
   itemsPerPage = 10,
-  isMobile 
+  isMobile,
+  isLoading
 }) => {
   const handlePageClick = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -54,6 +57,8 @@ const LaunchTable = ({
   };
 
   const renderPaginationItems = () => {
+    if (isLoading) return null;
+    
     const items = [];
     const maxVisible = isMobile ? 3 : 7;
     let startPage = 1;
@@ -77,7 +82,7 @@ const LaunchTable = ({
     items.push(
       <IconButton
         key="prev"
-        disabled={currentPage === 1}
+        disabled={currentPage === 1 || isLoading}
         onClick={() => handlePageClick(currentPage - 1)}
         sx={{
           width: 36,
@@ -206,7 +211,7 @@ const LaunchTable = ({
     items.push(
       <IconButton
         key="next"
-        disabled={currentPage === totalPages}
+        disabled={currentPage === totalPages || isLoading}
         onClick={() => handlePageClick(currentPage + 1)}
         sx={{
           width: 36,
@@ -229,100 +234,11 @@ const LaunchTable = ({
     return items;
   };
 
-  // Add null check for launches array
-  if (!launches || !Array.isArray(launches)) {
-    return (
-      <Box sx={{ 
-        backgroundColor: 'white', 
-        pb: 4,
-        width: '100%',
-      }}>
-        <TableContainer
-          component={Paper}
-          sx={{
-            boxShadow: 'none',
-            border: '1px solid #e0e0e0',
-            borderRadius: 1,
-            backgroundColor: 'white',
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#F4F5F7' }}>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>No.</TableCell>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>Launched (UTC)</TableCell>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>Location</TableCell>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>Mission</TableCell>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>Orbit</TableCell>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>Status</TableCell>
-                <TableCell sx={{ 
-                  fontSize: '0.75rem', 
-                  color: '#4B5563', 
-                  fontFamily: 'Inter, sans-serif',
-                  padding: isMobile ? '8px 4px' : '16px'
-                }}>Rocket</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={7} sx={{ 
-                  textAlign: 'center', 
-                  py: 4,
-                  borderBottom: 'none'
-                }}>
-                  <Typography variant="body1" sx={{ 
-                    color: '#666', 
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 500,
-                    mb: 1
-                  }}>
-                    Loading...
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ 
       backgroundColor: 'white', 
       pb: 4,
       width: '100%',
-      overflowX: isMobile ? 'auto' : 'visible', // Add horizontal scroll for mobile
     }}>
       <TableContainer
         component={Paper}
@@ -331,65 +247,69 @@ const LaunchTable = ({
           border: '1px solid #e0e0e0',
           borderRadius: 1,
           backgroundColor: 'white',
-          overflowX: isMobile ? 'auto' : 'visible', // Enable horizontal scroll on mobile
         }}
       >
-        <Table sx={{ minWidth: isMobile ? 650 : 'auto' }}> {/* Set minimum width for mobile */}
+        <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#F4F5F7' }}>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '40px' : 'auto' // Set minimum width for mobile
+                padding: isMobile ? '8px 4px' : '16px'
               }}>No.</TableCell>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '120px' : 'auto'
+                padding: isMobile ? '8px 4px' : '16px'
               }}>Launched (UTC)</TableCell>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '100px' : 'auto'
+                padding: isMobile ? '8px 4px' : '16px'
               }}>Location</TableCell>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '120px' : 'auto'
+                padding: isMobile ? '8px 4px' : '16px'
               }}>Mission</TableCell>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '80px' : 'auto'
+                padding: isMobile ? '8px 4px' : '16px'
               }}>Orbit</TableCell>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '80px' : 'auto'
+                padding: isMobile ? '8px 4px' : '16px'
               }}>Status</TableCell>
               <TableCell sx={{ 
                 fontSize: '0.75rem', 
                 color: '#4B5563', 
                 fontFamily: 'Inter, sans-serif',
-                padding: isMobile ? '8px 4px' : '16px',
-                minWidth: isMobile ? '100px' : 'auto'
+                padding: isMobile ? '8px 4px' : '16px'
               }}>Rocket</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {launches.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={7} sx={{ 
+                  textAlign: 'center', 
+                  py: 4,
+                  borderBottom: 'none'
+                }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress size={24} />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : launches.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} sx={{ 
                   textAlign: 'center', 
@@ -427,24 +347,21 @@ const LaunchTable = ({
                   <TableCell sx={{ 
                     fontSize: '0.75rem', 
                     fontFamily: 'Inter, sans-serif',
-                    padding: isMobile ? '8px 4px' : '16px',
-                    minWidth: isMobile ? '40px' : 'auto'
+                    padding: isMobile ? '8px 4px' : '16px'
                   }}>
                     {String((currentPage - 1) * itemsPerPage + index + 1).padStart(2, '0')}
                   </TableCell>
                   <TableCell sx={{ 
                     fontSize: '0.75rem', 
                     fontFamily: 'Inter, sans-serif',
-                    padding: isMobile ? '8px 4px' : '16px',
-                    minWidth: isMobile ? '120px' : 'auto'
+                    padding: isMobile ? '8px 4px' : '16px'
                   }}>
                     {formatDate(launch.date_utc)}
                   </TableCell>
                   <TableCell sx={{ 
                     fontSize: '0.75rem', 
                     fontFamily: 'Inter, sans-serif',
-                    padding: isMobile ? '8px 4px' : '16px',
-                    minWidth: isMobile ? '100px' : 'auto'
+                    padding: isMobile ? '8px 4px' : '16px'
                   }}>
                     {launch.launchpad?.name || 'Unknown'}
                   </TableCell>
@@ -455,23 +372,18 @@ const LaunchTable = ({
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    maxWidth: isMobile ? '100px' : 'none',
-                    minWidth: isMobile ? '120px' : 'auto'
+                    maxWidth: isMobile ? '100px' : 'none'
                   }}>
                     {launch.name}
                   </TableCell>
                   <TableCell sx={{ 
                     fontSize: '0.75rem', 
                     fontFamily: 'Inter, sans-serif',
-                    padding: isMobile ? '8px 4px' : '16px',
-                    minWidth: isMobile ? '80px' : 'auto'
+                    padding: isMobile ? '8px 4px' : '16px'
                   }}>
                     {getOrbitInfo(launch)}
                   </TableCell>
-                  <TableCell sx={{ 
-                    padding: isMobile ? '8px 4px' : '16px',
-                    minWidth: isMobile ? '80px' : 'auto'
-                  }}>
+                  <TableCell sx={{ padding: isMobile ? '8px 4px' : '16px' }}>
                     <StatusChip launch={launch} />
                   </TableCell>
                   <TableCell sx={{ 
@@ -481,8 +393,7 @@ const LaunchTable = ({
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    maxWidth: isMobile ? '100px' : 'none',
-                    minWidth: isMobile ? '100px' : 'auto'
+                    maxWidth: isMobile ? '100px' : 'none'
                   }}>
                     {launch.rocket?.name || 'Unknown'}
                   </TableCell>
@@ -493,7 +404,7 @@ const LaunchTable = ({
         </Table>
       </TableContainer>
 
-      {totalPages > 1 && launches.length > 0 && (
+      {!isLoading && totalPages > 1 && launches.length > 0 && (
         <Box
           sx={{
             display: 'flex',

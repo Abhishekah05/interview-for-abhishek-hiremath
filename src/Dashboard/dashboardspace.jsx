@@ -1,3 +1,4 @@
+// SpaceXDashboard.js
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery, useTheme } from '@mui/material';
 import Layout from '../Layouts/layout';
@@ -5,6 +6,7 @@ import FilterControls from './filtercontrol';
 import LaunchTable from './launchtable';
 import LaunchModal from './launchmodal';
 import LoadingSpinner from './loadingspinner';
+import EmptyState from './emptystate';
 import { filterLaunchesByDateRange } from '../Util/util';
 
 const SpaceXDashboard = () => {
@@ -16,6 +18,7 @@ const SpaceXDashboard = () => {
   const [selectedLaunch, setSelectedLaunch] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [filter, setFilter] = useState('all');
   const [dateRange, setDateRange] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +29,7 @@ const SpaceXDashboard = () => {
     const loadData = async () => {
       try {
         setLoading(true);
+        setError(false);
         
         const [launchesResponse, launchpadsResponse, rocketsResponse, payloadsResponse] = await Promise.all([
           fetch('https://api.spacexdata.com/v5/launches'),
@@ -33,6 +37,11 @@ const SpaceXDashboard = () => {
           fetch('https://api.spacexdata.com/v4/rockets'),
           fetch('https://api.spacexdata.com/v4/payloads')
         ]);
+        
+        if (!launchesResponse.ok || !launchpadsResponse.ok || 
+            !rocketsResponse.ok || !payloadsResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
         
         const [launchesData, launchpadsData, rocketsData, payloadsData] = await Promise.all([
           launchesResponse.json(),
@@ -70,6 +79,7 @@ const SpaceXDashboard = () => {
         setLaunches(enrichedLaunches);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -133,7 +143,30 @@ const SpaceXDashboard = () => {
   if (loading) {
     return (
       <Layout>
+        <FilterControls 
+          filter={filter} 
+          onFilterChange={handleFilterChange}
+          dateRange={dateRange}
+          onDateRangeChange={handleDateRangeChange}
+        />
         <LoadingSpinner />
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <FilterControls 
+          filter={filter} 
+          onFilterChange={handleFilterChange}
+          dateRange={dateRange}
+          onDateRangeChange={handleDateRangeChange}
+        />
+        <EmptyState 
+          title="Failed to load data" 
+          subtitle="Please check your connection and try again" 
+        />
       </Layout>
     );
   }
@@ -154,6 +187,7 @@ const SpaceXDashboard = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
         isMobile={isMobile}
+        isLoading={loading}
       />
 
       <LaunchModal 
