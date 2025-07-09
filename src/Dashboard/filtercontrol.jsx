@@ -63,7 +63,7 @@ const FilterControls = ({
                 fontFamily: 'inherit',
                 justifyContent: 'space-between',
                 padding: '8px 12px',
-                 marginLeft: '33px'
+                 marginLeft: '50px'
               }}
             >
               {getFilterLabel()}

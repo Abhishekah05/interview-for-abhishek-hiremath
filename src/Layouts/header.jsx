@@ -21,8 +21,9 @@ const Header = () => {
             height: '40px',
             width: 'auto',
             maxWidth: '250px',
-            objectFit: 'contain'
-          }}
+            objectFit: 'contain',
+            ml:9
+                    }}
         />
       </Toolbar>
     </AppBar>

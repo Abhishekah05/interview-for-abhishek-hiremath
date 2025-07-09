@@ -32,92 +32,65 @@ const LaunchModal = ({ open, launch, onClose }) => {
     return launch.success ? 'Success' : 'Failed';
   };
 
-  // Helper function to get payload type information
   const getPayloadType = () => {
-    if (launch.payloadObjects && launch.payloadObjects.length > 0) {
+    if (launch.payloadObjects?.length > 0) {
       const types = launch.payloadObjects
         .map(payload => payload.type)
-        .filter(type => type && type !== 'unknown')
-        .filter((type, index, self) => self.indexOf(type) === index); // Remove duplicates
-      
-      if (types.length > 0) {
-        return types.join(', ');
-      }
+        .filter(Boolean)
+        .filter((type, i, arr) => arr.indexOf(type) === i);
+      return types.join(', ') || 'Unknown';
     }
-    
-    // Fallback to original structure
-    if (launch.payloads && launch.payloads.length > 0) {
-      const firstPayload = launch.payloads[0];
-      if (typeof firstPayload === 'object' && firstPayload.type) {
-        return firstPayload.type;
-      }
-    }
-    
-    return 'Unknown';
+    return launch.payloads?.[0]?.type || 'Unknown';
   };
 
-  // Helper function to get orbit information
   const getOrbitInfo = () => {
-    if (launch.payloadObjects && launch.payloadObjects.length > 0) {
+    if (launch.payloadObjects?.length > 0) {
       const orbits = launch.payloadObjects
         .map(payload => payload.orbit)
-        .filter(orbit => orbit && orbit !== 'unknown')
-        .filter((orbit, index, self) => self.indexOf(orbit) === index); // Remove duplicates
-      
-      if (orbits.length > 0) {
-        return orbits.join(', ');
-      }
+        .filter(Boolean)
+        .filter((orbit, i, arr) => arr.indexOf(orbit) === i);
+      return orbits.join(', ') || 'Unknown';
     }
-    
-    // Fallback to original structure
-    if (launch.payloads && launch.payloads.length > 0) {
-      const firstPayload = launch.payloads[0];
-      if (typeof firstPayload === 'object' && firstPayload.orbit) {
-        return firstPayload.orbit;
-      }
-    }
-    
-    return 'Unknown';
+    return launch.payloads?.[0]?.orbit || 'Unknown';
   };
 
-  // Helper function to get payload mass
   const getPayloadMass = () => {
-    if (launch.payloadObjects && launch.payloadObjects.length > 0) {
-      const totalMass = launch.payloadObjects.reduce((sum, payload) => {
-        return sum + (payload.mass_kg || 0);
-      }, 0);
-      
-      if (totalMass > 0) {
-        return `${totalMass.toLocaleString()} kg`;
-      }
+    if (launch.payloadObjects?.length > 0) {
+      const totalMass = launch.payloadObjects.reduce((sum, payload) => sum + (payload.mass_kg || 0), 0);
+      return totalMass > 0 ? `${totalMass.toLocaleString()} kg` : 'Unknown';
     }
-    
     return 'Unknown';
   };
 
+  // Responsive styles
   const detailRowStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    py: 1.2,
+    py: isMobile ? 1 : 1.2,
     px: 0,
     borderBottom: '1px solid #e0e0e0',
-    minHeight: '40px'
+    minHeight: isMobile ? '36px' : '40px'
   };
 
   const labelStyle = {
     fontWeight: 400,
     color: '#666',
-    fontSize: '14px',
-    fontFamily: 'inherit'
+    fontSize: isMobile ? '13px' : '14px',
+    fontFamily: 'inherit',
+    flex: isMobile ? '0 0 120px' : '0 0 140px' // Fixed width for labels
   };
 
   const valueStyle = {
     fontWeight: 500,
     color: '#333',
-    fontSize: '14px',
+    fontSize: isMobile ? '13px' : '14px',
     fontFamily: 'inherit',
-    textAlign: 'right'
+    textAlign: 'right',
+    flex: 1,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   };
 
   return (
@@ -137,23 +110,28 @@ const LaunchModal = ({ open, launch, onClose }) => {
         }
       }}
     >
+      {/* Header Section */}
       <DialogTitle sx={{ p: 0 }}>
         <Box 
           display="flex" 
           justifyContent="space-between" 
           alignItems="center"
           sx={{ 
-            px: 3, 
-            py: 2.5, 
-            backgroundColor: '#fff'
+            px: isMobile ? 2 : 3, 
+            py: isMobile ? 1.5 : 2.5,
+            backgroundColor: '#fff',
+            position: isMobile ? 'sticky' : 'static',
+            top: 0,
+            zIndex: 1,
+            borderBottom: '1px solid #e0e0e0'
           }}
         >
-          <Box display="flex" alignItems="center" gap={2}>
+          <Box display="flex" alignItems="center" gap={isMobile ? 1 : 2}>
             <Avatar 
-              src={launch.links?.patch?.small || undefined}
+              src={launch.links?.patch?.small}
               sx={{ 
-                width: 48, 
-                height: 48,
+                width: isMobile ? 40 : 48, 
+                height: isMobile ? 40 : 48,
                 backgroundColor: '#f0f0f0',
                 border: '1px solid #e0e0e0'
               }}
@@ -164,9 +142,10 @@ const LaunchModal = ({ open, launch, onClose }) => {
               <Typography variant="h6" sx={{ 
                 fontFamily: 'inherit', 
                 fontWeight: 600,
-                fontSize: '20px',
+                fontSize: isMobile ? '18px' : '20px',
                 color: '#333',
-                mb: 0.5
+                mb: 0.5,
+                lineHeight: 1.2
               }}>
                 {launch.name}
               </Typography>
@@ -186,30 +165,45 @@ const LaunchModal = ({ open, launch, onClose }) => {
               />
             </Box>
           </Box>
-          <IconButton onClick={onClose} size="small">
+          <IconButton 
+            onClick={onClose} 
+            size="small"
+            sx={{
+              position: isMobile ? 'absolute' : 'relative',
+              right: isMobile ? 8 : 0,
+              top: isMobile ? 8 : 0
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
 
+      {/* Content Section */}
       <DialogContent sx={{ 
         p: 0,
-        overflow: 'hidden'
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '6px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#ccc',
+          borderRadius: '3px'
+        }
       }}>
         {/* Mission Description */}
         {launch.details && (
           <Box sx={{ 
-            px: 3, 
-            py: 2, 
+            px: isMobile ? 2 : 3, 
+            py: isMobile ? 1.5 : 2,
             backgroundColor: '#f8f9fa',
-            borderTop: '1px solid #e0e0e0',
             borderBottom: '1px solid #e0e0e0'
           }}>
             <Typography variant="body2" sx={{ 
               fontFamily: 'inherit', 
               lineHeight: 1.5,
               color: '#555',
-              fontSize: '14px'
+              fontSize: isMobile ? '13px' : '14px'
             }}>
               {launch.details}
             </Typography>
@@ -222,7 +216,7 @@ const LaunchModal = ({ open, launch, onClose }) => {
                 sx={{
                   color: '#1976d2',
                   textDecoration: 'none',
-                  fontSize: '14px',
+                  fontSize: isMobile ? '13px' : '14px',
                   fontWeight: 500,
                   display: 'inline-block',
                   mt: 1,
@@ -239,17 +233,17 @@ const LaunchModal = ({ open, launch, onClose }) => {
 
         {/* Details Section */}
         <Box sx={{ 
-          px: 3,
-          py: 2
+          px: isMobile ? 2 : 3,
+          py: isMobile ? 1.5 : 2
         }}>
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Flight Number</Typography>
-            <Typography sx={valueStyle}>{launch.flight_number}</Typography>
+            <Typography sx={valueStyle}>{launch.flight_number || 'Unknown'}</Typography>
           </Box>
 
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Mission Name</Typography>
-            <Typography sx={valueStyle}>{launch.name}</Typography>
+            <Typography sx={valueStyle}>{launch.name || 'Unknown'}</Typography>
           </Box>
 
           <Box sx={detailRowStyle}>
@@ -274,28 +268,24 @@ const LaunchModal = ({ open, launch, onClose }) => {
 
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Launch Date</Typography>
-            <Typography sx={valueStyle}>{formatDate(launch.date_utc)}</Typography>
+            <Typography sx={valueStyle}>
+              {launch.date_utc ? formatDate(launch.date_utc, isMobile) : 'Unknown'}
+            </Typography>
           </Box>
 
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Payload Type</Typography>
-            <Typography sx={valueStyle}>
-              {getPayloadType()}
-            </Typography>
+            <Typography sx={valueStyle}>{getPayloadType()}</Typography>
           </Box>
 
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Orbit</Typography>
-            <Typography sx={valueStyle}>
-              {getOrbitInfo()}
-            </Typography>
+            <Typography sx={valueStyle}>{getOrbitInfo()}</Typography>
           </Box>
 
           <Box sx={detailRowStyle}>
             <Typography sx={labelStyle}>Payload Mass</Typography>
-            <Typography sx={valueStyle}>
-              {getPayloadMass()}
-            </Typography>
+            <Typography sx={valueStyle}>{getPayloadMass()}</Typography>
           </Box>
 
           <Box sx={{ ...detailRowStyle, borderBottom: 'none' }}>
@@ -307,19 +297,26 @@ const LaunchModal = ({ open, launch, onClose }) => {
         </Box>
       </DialogContent>
 
+      {/* Mobile Footer */}
       {isMobile && (
         <DialogActions sx={{ 
           p: 2, 
           borderTop: '1px solid #e0e0e0',
-          backgroundColor: '#fff'
+          backgroundColor: '#fff',
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 1
         }}>
           <Button 
             onClick={onClose} 
             color="primary" 
+            variant="contained"
             sx={{ 
               fontFamily: 'inherit',
               textTransform: 'none',
-              fontWeight: 500
+              fontWeight: 500,
+              borderRadius: '6px',
+              py: 1
             }}
             fullWidth
           >
