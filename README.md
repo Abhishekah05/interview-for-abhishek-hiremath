@@ -1,74 +1,102 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
+## 🚀 SpaceX Launch Dashboard
+This is a modern, single-page web application built using React JS and Material UI that displays SpaceX launch data. It allows users to:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- Browse all SpaceX launches
+- Filter launches by status (upcoming/past)
+- View detailed launch information in a modal
+- Access the application on both desktop and mobile devices
 
-## Available Scripts
+## ✨ Key Features 
 
-In the project directory, you can run:
+🚀 Launch Listings
+- Displays all SpaceX launches in a responsive grid
+- Each card shows mission patch, mission name, launch date, and rocket name
+- Cards are clickable to view more details
 
-### `npm start`
+🔍 Launch Filtering
+* Users can filter launches by:
+ - Upcoming launches
+ - Past launches
+ - All launches
+* Filter updates the displayed launches instantly
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+📑 Launch Details Modal
+  - Clicking a launch card opens a detailed modal with:
+  - Full mission details
+  - Rocket specifications
+  - Launch site information
+  - Links to press kit and video (when available)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+⏳ Loading & Empty States
+  -  Shows loading spinner while fetching data
+  - Displays friendly empty state when no launches match filters
 
-### `npm test`
+📱 Mobile Responsive Design
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  - Custom mobile layout designed beyond the Figma specs
+  - Cards stack vertically on small screens
+  - Modal adapts to screen size
 
-### `npm run build`
+🌓 Dark/Light Mode Toggle
+  - Easily switch between light and dark UI themes
+  - Theme is applied globally using Material UI's theming system
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🔧 Technical Highlights 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+🧠 React Fundamentals
 
-### `npm run eject`
+ - Used functional components with React Hooks (useState, useEffect, useContext)
+ - Implemented custom hooks for data fetching and state management
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+🎨 Material UI Integration
+ - Implemented a fully themed UI with dark/light toggle
+ - Used MUI Grid, Cards, Dialogs, and other components
+ - Customized styles with makeStyles
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+🌐 API Integration (SpaceX REST API)
+ - Fetched launch data using axios
+ - Implemented error handling and retry logic
+ - Cached API responses for better performance
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+🌍 Global State Management
+ - Used React Context API to manage:
+ - Theme preferences
+ - Filter state
+ - Selected launch for modal
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+📦 Modular & Scalable Codebase
+   Separated logic into:
+ - /components – Reusable UI components
+ - /hooks – Custom hooks for data fetching
+ - /context – Shared state management
+ - /utils – Helper functions and constants
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+⚠️ Error Handling & Fallback UI
+''
+ - Graceful handling of API failures
+ - User-friendly error messages
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+ 
+🔁 Reusability
+ - Abstracted common patterns into reusable components
+ - Separated concerns for maintainability
 
-### Code Splitting
+🚀 Live Demo
+🔗 Deployed on Vercel:
+ https://space-x-dashboard-gold.vercel.app/
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
+## 📥 Installation & Running the App
+# 1. Clone the repository
+git clone https://github.com/Abhishekah05/SpaceX-Dashboard.git
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+# 2. Go into the project directory
+cd SpaceX-Dashboard
 
-### Making a Progressive Web App
+# 3. Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
-# interview-for-abhishek-hiremath
->>>>>>> 705f959778836eb0a022246c8a3ebacec0fda3ca
+# 4. Start the development server
+npm start
